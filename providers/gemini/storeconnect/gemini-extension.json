@@ -1,0 +1,6 @@
+{
+  "name": "storeconnect",
+  "version": "0.9.2",
+  "description": "Portable StoreConnect skills, project context, and specialist agents for storefront, Salesforce, theme, and POS work.",
+  "contextFileName": "GEMINI.md"
+}

@@ -1,0 +1,23 @@
+{
+  "name": "storeconnect",
+  "displayName": "StoreConnect Agent Skills",
+  "description": "Portable StoreConnect skills and specialist agents for storefront, Salesforce, theme, and POS work.",
+  "version": "0.9.2",
+  "author": {
+    "name": "Client Success",
+    "email": "support@storeconnect.com"
+  },
+  "homepage": "https://github.com/GetStoreConnect/ai",
+  "repository": "https://github.com/GetStoreConnect/ai",
+  "license": "MIT",
+  "keywords": [
+    "storeconnect",
+    "salesforce",
+    "liquid",
+    "ecommerce",
+    "theme",
+    "pos"
+  ],
+  "agents": "./agents/",
+  "skills": "./skills/"
+}

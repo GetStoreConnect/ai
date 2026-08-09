@@ -1,0 +1,21 @@
+{%- comment -%}
+  Home Page
+  The home page renders content blocks from the configured home page.
+  current_page is the content page linked to the store as its home page.
+{%- endcomment -%}
+
+{% capture page_content %}
+  {%- if current_page != blank -%}
+    {{ current_page.body_content }}
+  {%- endif -%}
+{% endcapture %}
+
+{%- if page_content != blank %}
+  {{ page_content }}
+{%- else %}
+  <div class="container">
+    <h1>Welcome to {{ current_store.name }}</h1>
+    <p>Configure a home page in your store settings to display content here.</p>
+    <a href="/products">Browse Products</a>
+  </div>
+{%- endif %}

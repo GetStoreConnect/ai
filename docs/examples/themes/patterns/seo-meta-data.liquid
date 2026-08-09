@@ -1,0 +1,55 @@
+{%- comment -%}
+  snippets/meta_data.liquid override — full-replacement themes that don't use
+  the base snippet must provide title/description/canonical/OG themselves.
+  Uses | try for attributes that vary by context. Render from the layout:
+  {% render "meta_data", title: title, meta_keywords: meta_keywords, meta_description: meta_description %}
+  Do NOT also emit a manual <title> alongside this.
+{%- endcomment -%}
+{%- default title: "", meta_keywords: "", meta_description: "" -%}
+
+{%- assign _page_title = current_page | try: "title" -%}
+{%- assign _page_desc = current_page | try: "meta_description" -%}
+{%- assign _store_desc = current_store | try: "meta_description" -%}
+{%- assign page_title = title | default: _page_title | default: current_store.name -%}
+{%- assign page_description = meta_description | default: _page_desc | default: _store_desc -%}
+
+<title>{{ page_title }}{% if page_title != current_store.name %} — {{ current_store.name }}{% endif %}</title>
+{%- if page_description != blank %}
+<meta name="description" content="{{ page_description | strip_html | truncate: 160 }}">
+{%- endif %}
+{%- if meta_keywords != blank %}<meta name="keywords" content="{{ meta_keywords }}">{% endif %}
+
+<link rel="canonical" href="{{ current_request.canonical_url }}">
+
+<meta property="og:site_name" content="{{ current_store.name }}">
+<meta property="og:title" content="{{ page_title }}">
+<meta property="og:url" content="{{ current_request.canonical_url }}">
+{%- if page_description != blank %}
+<meta property="og:description" content="{{ page_description | strip_html | truncate: 200 }}">
+{%- endif %}
+{%- if current_product != blank and current_product.image != blank %}
+<meta property="og:type" content="product">
+<meta property="og:image" content="{{ current_product.image.large_url }}">
+{%- elsif current_article != blank %}
+<meta property="og:type" content="article">
+{%- assign hero = current_article | try: "hero_image" -%}
+{%- if hero != blank %}<meta property="og:image" content="{{ hero.large_url }}">{% endif %}
+{%- else %}
+<meta property="og:type" content="website">
+{%- if current_store.logo != blank %}<meta property="og:image" content="{{ current_store.logo.large_url }}">{% endif %}
+{%- endif %}
+
+<meta name="twitter:card" content="summary_large_image">
+
+{%- comment -%} Organization JSON-LD (site-wide) {%- endcomment -%}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": {{ current_store.name | json }},
+  "url": "{{ current_store.url }}"
+  {%- if current_store.logo != blank %},
+  "logo": "{{ current_store.logo.huge_url }}"
+  {%- endif %}
+}
+</script>

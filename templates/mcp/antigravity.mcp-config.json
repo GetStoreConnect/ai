@@ -1,0 +1,7 @@
+{
+  "mcpServers": {
+    "storeconnect": {
+      "serverUrl": "https://store.example.com/mcp"
+    }
+  }
+}

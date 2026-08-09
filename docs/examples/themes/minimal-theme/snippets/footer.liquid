@@ -1,0 +1,13 @@
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-info">
+      <p>&copy; {{ "now" | date: "%Y" }} {{ current_store.name }}</p>
+      {%- comment -%} StoreDrop has no email/phone attributes — keep contact
+          details in store variables (store_variables['key'], "Available in
+          Liquid" checked) or a footer Content Block. {%- endcomment -%}
+      {% if store_variables['footer.contact_email'] != blank %}
+        <p>{{ store_variables['footer.contact_email'] }}</p>
+      {% endif %}
+    </div>
+  </div>
+</footer>

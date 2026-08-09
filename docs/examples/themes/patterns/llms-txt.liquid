@@ -1,0 +1,37 @@
+{%- comment -%}
+  llms.txt for AI discoverability. The platform serves llms.txt as a CONTENT
+  PAGE matched by path — there is no built-in snippet. Recipe: create a visible
+  content Page with path "llms.txt" and put this Liquid in its body, or render
+  it from a snippet the page includes.
+  Uses only verified accessors; paginate keeps big catalogs bounded.
+{%- endcomment -%}
+# {{ current_store.name }}
+
+> {{ current_store | try: "meta_description" | default: current_store.name }}
+
+## Products
+{% paginate all_products by 100 -%}
+{%- for product in all_products -%}
+- [{{ product.name }}]({{ current_store.url }}{{ product.path }}){% if product.summary_content != blank %}: {{ product.summary_content | strip_html | strip_newlines | truncate: 120 }}{% endif %}
+{% endfor -%}
+{%- endpaginate %}
+## Product Categories
+{% for category in all_product_categories -%}
+- [{{ category.name }}]({{ current_store.url }}{{ category.path }})
+{% endfor %}
+## Articles
+{% paginate all_articles by 100 -%}
+{%- for article in all_articles -%}
+- [{{ article.title }}]({{ current_store.url }}{{ article.path }}){% if article.summary_content != blank %}: {{ article.summary_content | strip_html | strip_newlines | truncate: 120 }}{% endif %}
+{% endfor -%}
+{%- endpaginate %}
+## Pages
+{% for page in all_pages -%}
+{%- if page.title != blank and page.path != blank -%}
+- [{{ page.title }}]({{ current_store.url }}{{ page.path }})
+{% endif -%}
+{%- endfor %}
+## Optional
+
+- [Search]({{ current_store.url }}{{ current_store.search_path }}): Search products and articles
+- [Cart]({{ current_store.url }}{{ current_store.cart_path }}): Shopping cart

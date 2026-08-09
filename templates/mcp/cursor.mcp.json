@@ -1,0 +1,7 @@
+{
+  "mcpServers": {
+    "storeconnect": {
+      "url": "${env:STORECONNECT_MCP_URL}"
+    }
+  }
+}

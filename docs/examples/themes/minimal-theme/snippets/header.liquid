@@ -1,0 +1,37 @@
+{%- assign store_link = current_store.home_path | default: '' -%}
+{%- if store_link == '/' -%}{%- assign store_link = '' -%}{%- endif -%}
+<header class="site-header">
+  <div class="container">
+    <a href="{{ store_link }}/" class="logo">
+      {% if current_store.logo %}
+        <img src="{{ current_store.logo.url }}" alt="{{ current_store.name }}">
+      {% else %}
+        {{ current_store.name }}
+      {% endif %}
+    </a>
+
+    <nav aria-label="Main">
+      {%- comment -%} The store's header menu; or a named menu via all_menus['<identifier>'] {%- endcomment -%}
+      {% assign menu = current_store.header_menu %}
+      {% if menu %}
+        {% for item in menu.menu_items %}
+          <a href="{{ item.link_target }}">{{ item.link_label }}</a>
+        {% endfor %}
+      {% else %}
+        <a href="{{ store_link }}/products">Products</a>
+        <a href="{{ store_link }}/articles">Articles</a>
+      {% endif %}
+    </nav>
+
+    <div class="header-actions">
+      {% if current_customer %}
+        <a href="{{ current_store.account_path }}">Account</a>
+        <a href="{{ current_store.logout_path }}">Logout</a>
+      {% else %}
+        <a href="{{ current_store.login_path }}">Login</a>
+      {% endif %}
+
+      {% component "cart-menu", reload: "sc.cart-updated" %}
+    </div>
+  </div>
+</header>

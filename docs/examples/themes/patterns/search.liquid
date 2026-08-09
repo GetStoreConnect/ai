@@ -1,0 +1,59 @@
+{%- comment -%}
+  pages/search.liquid — multi-type search results. Facts this encodes:
+  - The query accessor is current_search.term (not .query); total is .count.
+  - Results are grouped: results.products / .articles / .pages — paginate the
+    per-type collection, not results itself.
+  - Type tabs re-run the search with source params (current_search.path).
+  - Neither ArticleDrop nor PageDrop has .description — use summary_content /
+    meta_description via | try.
+{%- endcomment -%}
+
+<h1>{{ "search.title" | t }}</h1>
+
+<form method="get" action="{{ current_store.search_path }}" role="search">
+  <label for="search-q" class="sr-only">{{ "search.label" | t }}</label>
+  <input type="search" id="search-q" name="q" value="{{ current_search.term }}">
+  <button type="submit">{{ "search.submit" | t }}</button>
+</form>
+
+{% if current_search.term != blank %}
+  <p>{{ current_search.count }} {{ "search.results_for" | t }} “{{ current_search.term }}”</p>
+
+  {% case current_search.type %}
+  {% when "articles" %}
+    {% paginate current_search.results.articles by current_search.per_page %}
+      {% for article in current_search.results.articles %}
+        <article>
+          <h3><a href="{{ article.path }}">{{ article.title }}</a></h3>
+          {%- assign summary = article | try: "summary_content" -%}
+          {% if summary != blank %}<p>{{ summary | strip_html | truncate: 160 }}</p>{% endif %}
+        </article>
+      {% else %}
+        <p>{{ "search.no_results" | t }}</p>
+      {% endfor %}
+    {% endpaginate %}
+
+  {% when "pages" %}
+    {% paginate current_search.results.pages by current_search.per_page %}
+      {% for page in current_search.results.pages %}
+        <h3><a href="{{ page.path }}">{{ page.title }}</a></h3>
+      {% else %}
+        <p>{{ "search.no_results" | t }}</p>
+      {% endfor %}
+    {% endpaginate %}
+
+  {% else %}
+    {% paginate current_search.results.products by current_search.per_page %}
+      <div class="product-grid">
+        {% for product in current_search.results.products %}
+          <div class="product-card">
+            <h3><a href="{{ product.path }}">{{ product.name }}</a></h3>
+            {% unless product.pricing.hide_price? %}<p>{{ product.pricing.price | money }}</p>{% endunless %}
+          </div>
+        {% else %}
+          <p>{{ "search.no_results" | t }}</p>
+        {% endfor %}
+      </div>
+    {% endpaginate %}
+  {% endcase %}
+{% endif %}

@@ -1,0 +1,55 @@
+{%- default action: nil -%}
+{%- default body_content: nil -%}
+{%- default controller: nil -%}
+{%- default csp_meta_tag: nil -%}
+{%- default csrf_meta_tags: nil -%}
+{%- default id: nil -%}
+{%- default sc_support: nil -%}
+{%- default theme_supplement_javascript: nil -%}
+{%- default theme_supplement_stylesheet: nil -%}
+{%- default title: nil -%}
+{%- default meta_keywords: nil -%}
+{%- default meta_description: nil -%}
+{%- default theme_bar: nil -%}
+{%- default data: nil -%}
+
+<!doctype html>
+<html lang="{{ current_store.locale }}">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {{ csrf_meta_tags }}
+    {{ csp_meta_tag }}
+
+    {%- render "meta_data" %}
+
+    {%- require "styles/theme.css" %}
+    {{ theme_supplement_stylesheet }}
+    {% if current_store.global_css != blank %}
+      <style>{{ current_store.global_css }}</style>
+    {% endif %}
+
+    {%- require "scripts/theme.js" %}
+    {{ theme_supplement_javascript }}
+    {% if current_store.global_javascript != blank %}
+      <script>{{ current_store.global_javascript }}</script>
+    {% endif %}
+    {{ sc_support }}
+  </head>
+
+  <body id="{{ id }}" data-sc-controller="{{ controller }}" data-sc-action="{{ action }}" {{ data }}>
+    {{ theme_bar }}
+    <a href="#SC-Main" class="sr-only focus:not-sr-only">
+      {{ "accessibility.skip_to_content" | t }}
+    </a>
+
+    {%- render "header" %}
+
+    <main id="SC-Main">
+      {%- render "flash" %}
+      {{ body_content }}
+    </main>
+
+    {%- render "footer" %}
+  </body>
+</html>

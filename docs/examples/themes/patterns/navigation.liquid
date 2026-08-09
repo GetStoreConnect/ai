@@ -1,0 +1,39 @@
+{%- comment -%}
+  Navigation recipe. Facts this encodes:
+  - Menus: menu.menu_items (not .items); items: link_label (not .title),
+    link_target (universal href — .url is only set for link-type items),
+    children via item.menu_items. No active? — compare link_target to the path.
+  - Get menus from current_store.header_menu / footer_menu, or
+    all_menus['<identifier>'] (bracket access — identifiers are merchant-defined).
+  - Or skip custom markup entirely: {{ menu.render }} outputs the platform markup.
+{%- endcomment -%}
+{% default menu: nil %}
+{%- assign menu = menu | default: current_store.header_menu -%}
+
+{% if menu %}
+<nav aria-label="Main">
+  <ul class="nav-list">
+    {% for item in menu.menu_items %}
+      {% unless item.hidden? %}
+        {%- assign is_current = false -%}
+        {%- if item.link_target == current_request.path -%}{%- assign is_current = true -%}{%- endif -%}
+        <li class="nav-item {% if item.menu_items.size > 0 %}has-children{% endif %}">
+          <a href="{{ item.link_target }}" {% if is_current %}aria-current="page"{% endif %}
+             class="{{ item.style_classes }}">{{ item.link_label }}</a>
+          {% if item.menu_items.size > 0 %}
+            <button aria-expanded="false" aria-controls="submenu-{{ item.id }}"
+                    aria-label="Toggle {{ item.link_label }} submenu">▾</button>
+            <ul id="submenu-{{ item.id }}" class="nav-submenu">
+              {% for child in item.menu_items %}
+                {% unless child.hidden? %}
+                  <li><a href="{{ child.link_target }}">{{ child.link_label }}</a></li>
+                {% endunless %}
+              {% endfor %}
+            </ul>
+          {% endif %}
+        </li>
+      {% endunless %}
+    {% endfor %}
+  </ul>
+</nav>
+{% endif %}

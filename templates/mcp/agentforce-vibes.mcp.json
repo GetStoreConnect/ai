@@ -1,0 +1,10 @@
+{
+  "mcpServers": {
+    "storeconnect": {
+      "description": "StoreConnect — Store & Website Builder tools for the explicitly selected client store",
+      "type": "streamable-http",
+      "url": "${STORECONNECT_MCP_URL}",
+      "autoApprove": []
+    }
+  }
+}

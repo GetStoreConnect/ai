@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "storeconnect": {
+      "type": "http",
+      "url": "https://store.example.com/mcp",
+      "tools": ["*"]
+    }
+  }
+}

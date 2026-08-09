@@ -1,0 +1,120 @@
+name: Guard generated content
+
+# Every pattern in the list below is produced by scripts/render-packages.mjs
+# from canonical content maintained outside this repository, alongside the
+# StoreConnect documentation. An edit here does not survive the next sync, so
+# this job blocks the pull request and explains where the change belongs.
+# CONTRIBUTING.md directs outside contributors to open an issue.
+#
+# Two choices here are deliberate, and both are required for this to work as a
+# required status check on the default branch:
+#
+#   * No `paths:` filter on the trigger. A path-filtered workflow does not run
+#     at all when nothing matches, so a required check would never report and
+#     every unrelated pull request would sit blocked on a status that cannot
+#     arrive. The job therefore always runs and decides for itself.
+#
+#   * Only pull requests from forks are blocked. A maintainer pull request
+#     carrying the canonical sync touches these paths by definition — that is
+#     what the sync is — so failing on them would block every release. Outside
+#     contributions always arrive from a fork. Maintainer edits under
+#     `providers/` are still caught by `npm run render:check` in Validate,
+#     which byte-compares every provider tree against `shared/`.
+
+on:
+  pull_request:
+
+permissions:
+  contents: read
+  # Required for the pulls/{n}/files endpoint below. `contents: read` alone
+  # returns 403 there.
+  pull-requests: read
+
+concurrency:
+  group: guard-generated-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  block:
+    name: Generated content is not editable here
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      # Deliberately does not check out the pull request. The changed-file list
+      # comes from the API, so no untrusted code is fetched or executed here.
+      - name: Check for edits to generated content
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          IS_FORK: ${{ github.event.pull_request.head.repo.full_name != github.repository }}
+        run: |
+          set -euo pipefail
+
+          # One anchored extended regex per generated tree. Keep this in step
+          # with SKILL_OUTPUT_ROOTS, COMMAND_OUTPUT_ROOTS, AGENT_OUTPUTS,
+          # CONTEXT_OUTPUTS and MANAGED_EXACT_FILES in
+          # scripts/render-packages.mjs. Provider READMEs and plugin manifests
+          # are hand-maintained and deliberately absent.
+          cat > "$RUNNER_TEMP/patterns" <<'PATTERNS'
+          ^shared/
+          ^skills/
+          ^providers/[^/]+/storeconnect/skills/
+          ^providers/[^/]+/storeconnect/commands/
+          ^providers/[^/]+/storeconnect/agents/
+          ^providers/[^/]+/storeconnect/\.kiro/skills/
+          ^providers/[^/]+/storeconnect/LICENSE$
+          ^providers/gemini/storeconnect/GEMINI\.md$
+          ^templates/project-context/
+          PATTERNS
+
+          gh api "repos/$GITHUB_REPOSITORY/pulls/$PR_NUMBER/files" \
+            --paginate --jq '.[].filename' > "$RUNNER_TEMP/changed"
+
+          offenders="$(grep -E -f "$RUNNER_TEMP/patterns" "$RUNNER_TEMP/changed" || true)"
+
+          if [ -z "$offenders" ]; then
+            echo "No generated content changed."
+            exit 0
+          fi
+
+          count="$(printf '%s\n' "$offenders" | wc -l | tr -d ' ')"
+
+          if [ "$IS_FORK" != "true" ]; then
+            echo "::notice::This pull request updates $count generated file(s) from the canonical source, which is expected for a maintainer sync."
+            {
+              echo "## Generated content updated by a maintainer sync"
+              echo
+              echo "$count file(s) under a generated path changed. That is expected for a"
+              echo "release sync and is not blocked. \`npm run render:check\` in Validate"
+              echo "confirms every provider tree still matches \`shared/\`."
+              echo
+              printf '%s\n' '```'
+              printf '%s\n' "$offenders"
+              printf '%s\n' '```'
+            } >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+
+          {
+            echo "## This pull request edits generated content"
+            echo
+            echo "The files listed below are rendered from a canonical source"
+            echo "maintained by the StoreConnect team alongside the StoreConnect"
+            echo "documentation. An edit in this repository is overwritten by the"
+            echo "next sync, so it cannot be merged."
+            echo
+            echo "**Please open an issue instead.** Describe the problem, which"
+            echo "skill or command it affects, and which AI product and version"
+            echo "you were using. The team makes the change in the canonical"
+            echo "source and it reaches this repository on the next release."
+            echo
+            echo "See CONTRIBUTING.md for what makes a report actionable."
+            echo
+            printf '%s\n' '```'
+            printf '%s\n' "$offenders"
+            printf '%s\n' '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+          echo "::error::This pull request edits $count generated file(s). Open an issue instead; see CONTRIBUTING.md."
+          exit 1

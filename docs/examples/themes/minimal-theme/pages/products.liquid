@@ -1,0 +1,49 @@
+<div class="container">
+  <h1>{{ "products.index.all_products" | t }}</h1>
+
+  {%- comment -%} Results are grouped by type — iterate .products (each row IS a ProductDrop) {%- endcomment -%}
+  {% paginate current_search.results.products by current_search.per_page %}
+    <div class="product-grid">
+      {% for product in current_search.results.products %}
+        <div class="product-card">
+          {% if product.image %}
+            <a href="{{ product.path }}">
+              <img src="{{ product.image.medium_url }}"
+                   srcset="{{ product.image.thumb_url }} 240w, {{ product.image.medium_url }} 480w, {{ product.image.large_url }} 640w, {{ product.image.huge_url }} 1024w"
+                   sizes="(max-width: 575px) 50vw, (max-width: 991px) 33vw, 25vw"
+                   alt="{{ product.image.alt_text | default: product.name }}"
+                   loading="lazy"
+                   decoding="async">
+            </a>
+          {% endif %}
+          <h3><a href="{{ product.path }}">{{ product.name }}</a></h3>
+          {% unless product.pricing.hide_price? %}
+            <p class="price">{{ product.pricing.price | money }}</p>
+          {% endunless %}
+        </div>
+      {% else %}
+        <p>No products found.</p>
+      {% endfor %}
+    </div>
+
+    {% if paginate.pages > 1 %}
+      <nav class="pagination">
+        {% if paginate.previous %}
+          <a href="{{ paginate.previous.url }}">Previous</a>
+        {% endif %}
+        {% for part in paginate.parts %}
+          {% if part.gap? %}
+            <span>...</span>
+          {% elsif part.current? %}
+            <strong>{{ part.page }}</strong>
+          {% else %}
+            <a href="{{ part.url }}">{{ part.page }}</a>
+          {% endif %}
+        {% endfor %}
+        {% if paginate.next %}
+          <a href="{{ paginate.next.url }}">Next</a>
+        {% endif %}
+      </nav>
+    {% endif %}
+  {% endpaginate %}
+</div>
