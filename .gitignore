@@ -47,3 +47,5 @@ claude_desktop_config.json
 **/.cursor/mcp.json
 **/.kiro/settings/mcp.json
 **/.agents/mcp_config.json
+
+# Smoke test: exercising the publish write path. Do not merge.
