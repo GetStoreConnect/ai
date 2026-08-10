@@ -1,0 +1,23 @@
+{
+  "name": "storeconnect-ai",
+  "owner": {
+    "name": "Client Success",
+    "email": "support@storeconnect.com"
+  },
+  "metadata": {
+    "description": "StoreConnect skills and agent packages for supported AI products."
+  },
+  "plugins": [
+    {
+      "name": "storeconnect",
+      "source": "providers/cursor/storeconnect",
+      "description": "Portable StoreConnect skills and specialist agents for storefront, Salesforce, theme, and POS work.",
+      "category": "developer-tools",
+      "tags": [
+        "commerce",
+        "storefront",
+        "point-of-sale"
+      ]
+    }
+  ]
+}

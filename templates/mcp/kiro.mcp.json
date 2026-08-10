@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "storeconnect": {
+      "url": "https://store.example.com/mcp",
+      "disabled": false,
+      "autoApprove": []
+    }
+  }
+}

@@ -1,0 +1,64 @@
+{%- comment -%}
+  Product listing recipe (pages/products.liquid or a category page).
+  Facts this encodes:
+  - current_search populates on /products, /search, category & location pages.
+  - results are GROUPED BY TYPE: iterate current_search.results.products
+    (each row is a ProductDrop — there is no result.product wrapper).
+  - Filters come from current_search.fields; options have id/label/name/value
+    only (no count, no selected? — test with `field.value contains option.value`).
+  - Price is product.pricing.price, gated on pricing.hide_price?.
+{%- endcomment -%}
+
+<form method="get" action="{{ current_search.path }}" class="filters">
+  {% for field_pair in current_search.fields %}
+    {% assign field = field_pair[1] %}
+    <fieldset>
+      <legend>{{ field.label }}</legend>
+      {% for option in field.options %}
+        <label>
+          <input type="checkbox" name="{{ field.name }}[]" value="{{ option.value }}"
+                 {% if field.value contains option.value %}checked{% endif %}>
+          {{ option.label }}
+        </label>
+      {% endfor %}
+    </fieldset>
+  {% endfor %}
+  <button type="submit">{{ "search.filters.apply" | t }}</button>
+</form>
+
+{% paginate current_search.results.products by current_search.per_page %}
+  <p>{{ current_search.count }} {{ "search.results" | t }}</p>
+  <div class="product-grid">
+    {% for product in current_search.results.products %}
+      <div class="product-card">
+        {% if product.image %}
+          <a href="{{ product.path }}">
+            <img src="{{ product.image.medium_url }}"
+                 srcset="{{ product.image.thumb_url }} 240w, {{ product.image.medium_url }} 480w, {{ product.image.large_url }} 640w"
+                 sizes="(max-width: 575px) 50vw, (max-width: 991px) 33vw, 25vw"
+                 alt="{{ product.image.alt_text | default: product.name }}"
+                 loading="lazy" decoding="async">
+          </a>
+        {% endif %}
+        <h3><a href="{{ product.path }}">{{ product.name }}</a></h3>
+        {% unless product.pricing.hide_price? %}
+          <p class="price">{{ product.pricing.price | money }}</p>
+        {% endunless %}
+      </div>
+    {% else %}
+      <p>{{ "search.no_results" | t }}</p>
+    {% endfor %}
+  </div>
+
+  {% if paginate.pages > 1 %}
+    <nav class="pagination" aria-label="Pagination">
+      {% if paginate.previous %}<a href="{{ paginate.previous.url }}">&laquo;</a>{% endif %}
+      {% for part in paginate.parts %}
+        {% if part.gap? %}<span>…</span>
+        {% elsif part.current? %}<strong aria-current="page">{{ part.page }}</strong>
+        {% else %}<a href="{{ part.url }}">{{ part.page }}</a>{% endif %}
+      {% endfor %}
+      {% if paginate.next %}<a href="{{ paginate.next.url }}">&raquo;</a>{% endif %}
+    </nav>
+  {% endif %}
+{% endpaginate %}

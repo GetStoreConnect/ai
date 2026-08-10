@@ -1,0 +1,22 @@
+{
+  "name": "@getstoreconnect/ai",
+  "version": "0.9.2",
+  "private": true,
+  "description": "Validation and generation tooling for the StoreConnect AI monorepo",
+  "type": "module",
+  "license": "MIT",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "mcp:config": "node scripts/render-mcp-config.mjs",
+    "render": "node scripts/render-packages.mjs",
+    "render:check": "node scripts/render-packages.mjs --check",
+    "lint": "node scripts/lint-repository.mjs",
+    "test:mcp-config": "node scripts/test-mcp-config.mjs",
+    "validate": "node scripts/validate-repository.mjs",
+    "version:set": "node scripts/set-version.mjs",
+    "version:check": "node scripts/set-version.mjs --check",
+    "check": "npm run render:check && npm run lint && npm run test:mcp-config && npm run validate"
+  }
+}

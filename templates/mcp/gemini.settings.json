@@ -1,0 +1,7 @@
+{
+  "mcpServers": {
+    "storeconnect": {
+      "httpUrl": "${STORECONNECT_MCP_URL}"
+    }
+  }
+}

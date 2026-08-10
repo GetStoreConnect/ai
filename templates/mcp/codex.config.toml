@@ -1,0 +1,6 @@
+[mcp_servers.storeconnect]
+url = "https://store.example.com/mcp"
+
+# Optional hardening: prompt for writes while allowing read-only tools under
+# the client's normal policy. Leave commented unless this matches local policy.
+# default_tools_approval_mode = "writes"

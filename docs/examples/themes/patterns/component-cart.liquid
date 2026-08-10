@@ -1,0 +1,65 @@
+{%- comment -%}
+  components/cart.liquid — reloadable cart. Facts this encodes:
+  - Place with {% component "cart", reload: "sc.cart-updated sc.voucher-applied sc.voucher-removed" %}
+  - No cart.empty? — test items.size. No item.unit_price/line_total — per-unit
+    price is item.pricing.price. Totals: sub_total / shipping_cost / total_tax /
+    total (no subtotal/shipping_total/tax_total/discount_total).
+  - Quantity updates: ONE {% form "cart" %} with inputs named
+    cart_items[<item.id>][quantity]; quantity 0 removes. Item removal links use
+    item.delete_path. Vouchers: cart.applied_vouchers + remove-voucher with voucher:.
+  - Filter adjustment_items out of the line list; show them in the totals area.
+{%- endcomment -%}
+
+{% if current_cart == blank or current_cart.items.size == 0 %}
+  <p>{{ "cart.empty" | t }}</p>
+  <a href="{{ current_store.products_path | default: '/products' }}">{{ "cart.continue_shopping" | t }}</a>
+{% else %}
+  {% form "cart" %}
+    {% render "form_errors", errors: form.errors %}
+
+    {% for item in current_cart.items %}
+      <div class="cart-item">
+        {% if item.product.image %}
+          <img src="{{ item.product.image.small_url }}" alt="{{ item.product.image.alt_text | default: item.product.name }}">
+        {% endif %}
+        <a href="{{ item.product.path }}">{{ item.name }}</a>
+        <span class="unit-price">{{ item.pricing.price | money }}</span>
+        <label for="qty-{{ item.id }}" class="sr-only">{{ "cart.quantity" | t }}</label>
+        <input type="number" id="qty-{{ item.id }}"
+               name="cart_items[{{ item.id }}][quantity]"
+               value="{{ item.quantity }}" min="0"
+               {% if item.max_quantity %}max="{{ item.max_quantity }}"{% endif %}>
+        <a href="{{ item.delete_path }}" data-method="delete" aria-label="Remove {{ item.name }}">×</a>
+      </div>
+    {% endfor %}
+
+    <button type="submit">{{ "cart.update" | t }}</button>
+  {% endform %}
+
+  {%- comment -%} Vouchers {%- endcomment -%}
+  {% for voucher in current_cart.applied_vouchers %}
+    <div class="applied-voucher">
+      {{ voucher.code }}
+      {% form "remove-voucher", voucher: voucher %}
+        <button type="submit" aria-label="Remove voucher {{ voucher.code }}">×</button>
+      {% endform %}
+    </div>
+  {% endfor %}
+  {% form "apply-voucher" %}
+    <input name="{{ form.code.name }}" placeholder="{{ 'cart.voucher_code' | t }}">
+    <input name="{{ form.pin.name }}" type="password" placeholder="PIN">
+    <button type="submit">{{ "cart.apply" | t }}</button>
+  {% endform %}
+
+  {%- comment -%} Totals {%- endcomment -%}
+  <dl class="cart-totals">
+    <dt>{{ "cart.subtotal" | t }}</dt><dd>{{ current_cart.sub_total | money }}</dd>
+    {% if current_cart.shipping_cost > 0 %}
+      <dt>{{ "cart.shipping" | t }}</dt><dd>{{ current_cart.shipping_cost | money }}</dd>
+    {% endif %}
+    <dt>{{ "cart.tax" | t }}</dt><dd>{{ current_cart.total_tax | money }}</dd>
+    <dt>{{ "cart.total" | t }}</dt><dd>{{ current_cart.total | money }}</dd>
+  </dl>
+
+  <a href="{{ current_store.checkout_path }}" class="checkout-button">{{ "cart.checkout" | t }}</a>
+{% endif %}

@@ -1,0 +1,43 @@
+{%- comment -%}
+  Add-to-cart recipe. Facts this encodes:
+  - Prefer the product: option with the selected product drop.
+  - A VARIANT IS A PRODUCT — to sell a specific variant, submit that variant
+    product as the form target. There is no variant_id field on the form.
+  - Gate with can_add_to_cart? / out_of_stock? (there is no product.available).
+  - price field only for variable-pricing products; booking fields for bookables.
+{%- endcomment -%}
+{% default product: nil %}
+
+{% if product.out_of_stock? %}
+  <p class="stock-message">{{ product.out_of_stock_text }}</p>
+{% elsif product.available_only_in_bundle? %}
+  <p class="stock-message">{{ product.unavailable_text }}</p>
+{% elsif product.can_add_to_cart? %}
+  {% form "add-to-cart", product: product, class: "add-to-cart" %}
+    {% render "form_errors", errors: form.errors %}
+
+    {% if product.can_select_quantity? %}
+      <label for="atc-qty">{{ "products.show.quantity" | t }}</label>
+      <input type="number" id="atc-qty" name="{{ form.quantity.name }}"
+             value="1" min="1"
+             {% if product.maximum_quantity %}max="{{ product.maximum_quantity }}"{% endif %}>
+    {% endif %}
+
+    <button type="submit">{{ product.add_to_cart_text | default: "products.show.add_to_cart" | t }}</button>
+  {% endform %}
+{% endif %}
+
+{%- comment -%}
+  Variant selection: render one control per variant type; each choice maps to a
+  variant product. Swap the form's product to the selected variant (JS sets a
+  hidden product target, or navigate to the variant's own path).
+
+  {% for type in product.variant_types %}
+    <label for="{{ type.form_value }}">{{ type.name }}</label>
+    <select id="{{ type.form_value }}" name="{{ type.form_value }}">
+      {% for choice in type.variant_choices %}
+        <option value="{{ choice.value }}">{{ choice.label }}</option>
+      {% endfor %}
+    </select>
+  {% endfor %}
+{%- endcomment -%}

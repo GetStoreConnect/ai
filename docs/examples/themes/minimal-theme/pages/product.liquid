@@ -1,0 +1,131 @@
+<div class="container">
+  {%- render "breadcrumbs" %}
+  {%- render "products/product/json-ld", product: current_product %}
+
+  <div class="product-display">
+    {%- comment -%} Images {%- endcomment -%}
+    <div class="product-images">
+      {% if current_product.image %}
+        <img src="{{ current_product.image.huge_url }}"
+             srcset="{{ current_product.image.large_url }} 640w,
+                     {{ current_product.image.huge_url }} 1024w,
+                     {{ current_product.image.massive_url }} 2048w"
+             sizes="(max-width: 767px) 100vw, 50vw"
+             alt="{{ current_product.image.alt_text | default: current_product.name }}"
+             fetchpriority="high">
+      {% endif %}
+      {% if current_product.images.size > 1 %}
+        <div class="product-thumbnails">
+          {% for image in current_product.images %}
+            <img src="{{ image.thumb_url }}"
+                 srcset="{{ image.small_url }} 100w, {{ image.thumb_url }} 240w"
+                 sizes="80px"
+                 alt=""
+                 loading="lazy"
+                 decoding="async">
+          {% endfor %}
+        </div>
+      {% endif %}
+    </div>
+
+    {%- comment -%} Details {%- endcomment -%}
+    <div class="product-details">
+      {% if current_product.brand %}
+        <div class="product-brand">{{ current_product.brand.name }}</div>
+      {% endif %}
+
+      <h1>{{ current_product.name }}</h1>
+
+      <div class="product-code">{{ current_product.product_code }}</div>
+
+      {%- comment -%} Price {%- endcomment -%}
+      {% unless current_product.pricing.hide_price? %}
+        <div class="product-price">
+          {{ current_product.pricing.price | money }}
+          {% unless current_product.pricing.tax_inclusive? %}
+            {% if current_product.pricing.price > 0 %}
+              <small>{{ "products.show.excluding_tax" | t }}</small>
+            {% endif %}
+          {% endunless %}
+        </div>
+      {% endunless %}
+
+      {%- comment -%} Out of stock {%- endcomment -%}
+      {% if current_product.out_of_stock? %}
+        <div class="out-of-stock">{{ current_product.out_of_stock_text }}</div>
+      {% endif %}
+
+      {%- comment -%} Variant selector — each choice identifies a variant
+          product. Use the selected variant as the add-to-cart form target
+          (wire with JS, or link each choice to its variant's path). There is no
+          variant_id form field. {%- endcomment -%}
+      {% if current_product.variant_types.size > 0 %}
+        {% for type in current_product.variant_types %}
+          <div class="variant-type">
+            <label for="{{ type.form_value }}">{{ type.name }}</label>
+            <select id="{{ type.form_value }}" name="{{ type.form_value }}">
+              <option value="">Select {{ type.name }}</option>
+              {% for choice in type.variant_choices %}
+                <option value="{{ choice.value }}">{{ choice.label }}</option>
+              {% endfor %}
+            </select>
+          </div>
+        {% endfor %}
+      {% endif %}
+
+      {%- comment -%} Add to cart {%- endcomment -%}
+      {% if current_product.can_add_to_cart? and current_product.available_only_in_bundle? == false %}
+        {% form "add-to-cart", product: current_product %}
+          <label for="quantity">{{ "products.show.quantity" | t }}</label>
+          <input type="number" id="quantity" name="{{ form.quantity.name }}" value="1" min="1">
+          <button type="submit">{{ "products.show.add_to_cart" | t }}</button>
+        {% endform %}
+      {% endif %}
+
+      {%- comment -%} Summary {%- endcomment -%}
+      {% if current_product.summary_content != blank %}
+        <div class="product-summary">{{ current_product.summary_content }}</div>
+      {% endif %}
+    </div>
+  </div>
+
+  {%- comment -%} Features and specifications {%- endcomment -%}
+  {% if current_product.features_content != blank %}
+    <section class="product-features">
+      <h3>{{ current_product.features_label }}</h3>
+      <div class="rich-text">{{ current_product.features_content }}</div>
+    </section>
+  {% endif %}
+
+  {% if current_product.specifications_content != blank %}
+    <section class="product-specifications">
+      <h3>{{ current_product.specifications_label }}</h3>
+      <div class="rich-text">{{ current_product.specifications_content }}</div>
+    </section>
+  {% endif %}
+
+  {%- comment -%} Related products {%- endcomment -%}
+  {% if current_product.related_products.size > 0 %}
+    <section class="related-products">
+      <h3>Related Products</h3>
+      <div class="product-grid">
+        {% for product in current_product.related_products limit: 4 %}
+          <div class="product-card">
+            {% if product.image %}
+              <a href="{{ product.path }}">
+                <img src="{{ product.image.medium_url }}"
+                     srcset="{{ product.image.thumb_url }} 240w, {{ product.image.medium_url }} 480w, {{ product.image.large_url }} 640w"
+                     sizes="(max-width: 575px) 50vw, 25vw"
+                     alt="{{ product.image.alt_text | default: product.name }}"
+                     loading="lazy"
+                     decoding="async">
+              </a>
+            {% endif %}
+            <h4><a href="{{ product.path }}">{{ product.name }}</a></h4>
+            {% unless product.pricing.hide_price? %}<p>{{ product.pricing.price | money }}</p>{% endunless %}
+          </div>
+        {% endfor %}
+      </div>
+    </section>
+  {% endif %}
+</div>
