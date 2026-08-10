@@ -1532,6 +1532,22 @@ assertExactEntries("providers", Object.keys(PROVIDERS));
 for (const provider of Object.keys(PROVIDERS)) {
   assertExactEntries(`providers/${provider}`, ["storeconnect"]);
 }
+
+// Two logo variants, and the difference between them is load-bearing.
+//
+//   logo.png       transparent, referenced by the Cursor plugin manifest. The
+//                  counter of the S takes the host background, so it reads on a
+//                  light or a dark listing.
+//   logo-plate.png white background plate, 1024x1024, for Cursor's publisher
+//                  submission form, which asks for 1:1 "with background plate".
+//
+// The plate is referenced by no manifest and no document — it exists for a form
+// — so without this pin it reads as an unused file and gets deleted. It is
+// derived from logo.png: crop to the alpha bounding box, scale the longest edge
+// to 76% of 1024 (a 12% inset each side) with LANCZOS, center on white. A navy
+// plate was tried and rejected: the mark's own navy tones blend into it and the
+// counter of the S disappears.
+assertExactEntries("providers/cursor/storeconnect/assets", ["logo-plate.png", "logo.png"]);
 for (const skillRoot of SKILL_ROOTS) {
   assertExactEntries(skillRoot.path, EXPECTED_SKILLS);
   for (const skill of EXPECTED_SKILLS) {
