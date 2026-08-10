@@ -34,7 +34,7 @@ hostnames or environment-variable references.
   per-store runtime title after connection; the Registry title does not need
   to match it.
 - Never replace `{store_domain}` with a real customer domain.
-- Do not add credentials, authorization headers, or a static tool catalogue.
+- Do not add credentials, authorization headers, or a static tool catalog.
 - Clients must discover the available tools and schemas from the authenticated
   live server.
 - Keep the entry remote-only unless StoreConnect publishes a supported local

@@ -13,7 +13,7 @@ provides the live tools and schemas for one store.
   configuration; credentials must never be committed or placed in prompts.
 - Verify the connected store, environment, and identity with a read-only live
   operation before making a change.
-- Treat the authenticated server's tool catalogue and schemas as authoritative.
+- Treat the authenticated server's tool catalog and schemas as authoritative.
 - Stage writes, inspect the returned summary, preview where available, obtain
   explicit approval, and recheck asynchronous results before reporting success.
 - If an operation is not exposed by the live server, stop and ask the

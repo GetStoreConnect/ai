@@ -27,7 +27,7 @@ identifiers; public examples must use placeholders.
    the intended store, environment, and signed-in identity.
 
 The live server supplies the current tools and input schemas after
-authentication. Treat that runtime catalogue as authoritative; do not infer
+authentication. Treat that runtime catalog as authoritative; do not infer
 tool names, arguments, or access from examples in this repository.
 
 ## Credentials and access

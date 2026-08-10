@@ -142,7 +142,7 @@ const MCP_TEMPLATE_FILES = [
 ];
 
 const STORECONNECT_MCP_DESCRIPTION =
-  "Build and manage a StoreConnect store: content, catalogue, navigation, media, and themes.";
+  "Build and manage a StoreConnect store: content, catalog, navigation, media, and themes.";
 
 function relative(filePath) {
   return path.relative(ROOT, filePath).split(path.sep).join("/") || ".";
