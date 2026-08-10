@@ -70,7 +70,10 @@ const PROVIDERS = {
     packageRoot: "providers/cursor/storeconnect",
     skillRoot: "providers/cursor/storeconnect/skills",
     manifest: "providers/cursor/storeconnect/.cursor-plugin/plugin.json",
-    entries: [".cursor-plugin", "LICENSE", "README.md", "agents", "commands", "skills"],
+    // `assets` holds the Marketplace listing logo. Cursor is the only package
+    // carrying one, because it is the only host that asks for a committed file
+    // rather than a hosted URL.
+    entries: [".cursor-plugin", "LICENSE", "README.md", "agents", "assets", "commands", "skills"],
     agents: EXPECTED_AGENTS.map((name) => `${name}.md`),
     commands: EXPECTED_COMMANDS.map((name) => `${name}.md`),
   },
@@ -621,9 +624,28 @@ function validateProviderManifestShape(providerName, manifest, filePath) {
     // here claimed the schema had no such field; that was wrong.
     // `publisher` is still absent, and category/tags belong on the
     // marketplace.json plugin entry rather than here.
-    assertExactKeys(manifest, ["name", "displayName", "description", "version", "author", "homepage", "repository", "license", "keywords", "agents", "skills"], filePath, "Cursor manifest");
+    //
+    // `logo` is what the Cursor Marketplace listing displays, and Cursor asks
+    // for it as a committed file rather than a hosted URL: a relative path
+    // resolves against GitHub raw content, and only *GitHub* absolute URLs are
+    // documented as accepted. The path is plugin-root relative with no `./`
+    // prefix — `assets/logo.png` here resolves to
+    // `providers/cursor/storeconnect/assets/logo.png`, matching the form used by
+    // the third-party plugins in `cursor/plugins`. The marketplace entry
+    // deliberately carries none: not one of the 29 entries in Cursor's own
+    // `.cursor-plugin/marketplace.json` sets `logo`.
+    assertExactKeys(manifest, ["name", "displayName", "description", "version", "author", "homepage", "repository", "license", "logo", "keywords", "agents", "skills"], filePath, "Cursor manifest");
     requireString(manifest, "displayName", filePath);
     validateAuthorShape(manifest.author, filePath, false);
+    requireExactString(manifest, "logo", "assets/logo.png", filePath);
+    // Pinning the string is not enough. A `logo` pointing at a file that is not
+    // there validates cleanly and then renders as a broken image in the
+    // Marketplace listing, which is the one place nobody on this side looks.
+    const cursorRoot = path.dirname(path.dirname(filePath));
+    const logoPath = `${cursorRoot}/assets/logo.png`;
+    if (!exists(logoPath)) {
+      addFinding(filePath, `logo file is missing: ${logoPath}`);
+    }
     requireExactString(manifest, "agents", "./agents/", filePath);
     requireExactString(manifest, "skills", "./skills/", filePath);
   } else if (providerName === "gemini") {
