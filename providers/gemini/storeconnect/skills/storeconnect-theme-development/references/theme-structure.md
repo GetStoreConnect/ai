@@ -428,10 +428,8 @@ block type a content editor can place on any page.
 
 ### Built-in templates
 
-Fourteen. Twelve have a matching value on the restricted
-`s_c__Content_Block__c.s_c__Template__c` picklist. `video` and `featured_category_products` do not —
-they ship as templates only, so a content editor cannot select either one until someone adds the
-picklist value, exactly as for a custom template:
+Fourteen, each with a matching value on the restricted `s_c__Content_Block__c.s_c__Template__c`
+picklist:
 
 | Key | Picklist value | What it renders |
 |---|---|---|
@@ -440,13 +438,13 @@ picklist value, exactly as for a custom template:
 | `blocks/html` | `html` | Raw HTML/markdown passthrough, no styling |
 | `blocks/image` | `image` | One image, optionally linked |
 | `blocks/media` | `media` | Link to a downloadable file, plus copy |
-| `blocks/video` | `video` — **not on the picklist** | Embeds a self-hosted video |
+| `blocks/video` | `video` | Embeds a self-hosted video |
 | `blocks/image_beside_text` | `image_beside_text` | Image beside heading, copy, CTA |
 | `blocks/image_text_overlay` | `image_text_overlay` | Full-width background image with text overlaid |
 | `blocks/slideshow` | `slideshow` | Rotating carousel of child blocks |
 | `blocks/featured_products` | `featured_products` | Carousel of hand-picked products |
 | `blocks/featured_categories` | `featured_categories` | Carousel of product categories |
-| `blocks/featured_category_products` | `featured_category_products` — **not on the picklist** | Paginated product grid pulled from categories |
+| `blocks/featured_category_products` | `featured_category_products` | Paginated product grid pulled from categories |
 | `blocks/featured_articles` | `featured_articles` | Grid of articles |
 | `blocks/featured_pages` | `featured_pages` | Linked list of pages |
 
@@ -506,12 +504,10 @@ The theme CSS also ships `sc-two-to-four-column` and `sc-two-to-five-column` gri
 Salesforce rejects them as `layout_style` values. Use a custom `blocks/<key>` template if you need
 those grids.
 
-**These vocabularies are closed.** There is no theme variable, store setting, or Liquid hook that
-widens them — the Website Builder's option lists are hard-coded and the Salesforce fields are
-restricted picklists, so an unlisted value is rejected on save. To get a style variant the
-vocabulary does not cover, either add the picklist value in Salesforce (it then needs matching CSS,
-and the Website Builder still will not offer it), or write a custom `blocks/<key>` template that
-hard-codes the styling you want. Do not invent a value and expect the platform to accept it.
+**Extending a vocabulary.** Each list is unioned with any extra values declared in a theme variable
+on the store's active theme: `additional_sub_types`, `additional_layout_styles`,
+`additional_alignments`. The value is a comma- or space-separated string, or a JSON array. Add the
+value there **and** style it in your CSS; the platform only widens what it accepts.
 
 For a block that needs a record association the platform does not provide (block to article
 category, for example), add a custom lookup field on `s_c__Content_Block__c` plus a Custom Data
