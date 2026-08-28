@@ -72,9 +72,12 @@ jobs:
             --file storeconnect-gemini.tar.gz \
             --directory providers/gemini/storeconnect .
           # Gemini CLI rejects an archive whose manifest is not at its root.
-          tar --list --file storeconnect-gemini.tar.gz | grep --quiet --line-regexp './gemini-extension.json'
+          # No --quiet on this grep: it must drain the whole listing, or tar
+          # hits a closed pipe mid-write and pipefail fails the step.
+          tar --list --file storeconnect-gemini.tar.gz | grep --line-regexp './gemini-extension.json'
 
       - name: Publish the release
+        id: publish
         if: steps.version.outputs.needed == 'true'
         env:
           GH_TOKEN: ${{ github.token }}
@@ -99,13 +102,17 @@ jobs:
         if: always()
         run: |
           {
-            if [ "${{ steps.version.outputs.needed }}" = "true" ]; then
+            if [ "${{ steps.publish.outcome }}" = "success" ]; then
               echo "## Released"
               echo
               echo "v${{ steps.version.outputs.version }} with the Gemini extension archive."
-            else
+            elif [ "${{ steps.version.outputs.needed }}" = "false" ]; then
               echo "## Nothing to release"
               echo
               echo "v${{ steps.version.outputs.version }} is already released."
+            else
+              echo "## Release failed"
+              echo
+              echo "v${{ steps.version.outputs.version }} was needed but not published; see the failed step."
             fi
           } >> "$GITHUB_STEP_SUMMARY"
