@@ -11,13 +11,21 @@ StoreConnect Antigravity package for the personal tiers.
 
 ## Install
 
-The extension manifest is nested in this monorepo, so install its provider
-directory from a checkout rather than passing the repository root URL:
+Install from the latest release:
+
+```shell
+gemini extensions install https://github.com/GetStoreConnect/ai
+gemini extensions list
+```
+
+Each release attaches this provider directory as a single archive with
+`gemini-extension.json` at its root, which is what lets the repository URL
+work even though the manifest is nested in this monorepo. To run unreleased
+changes, install the provider directory from a checkout instead:
 
 ```shell
 git clone --depth 1 https://github.com/GetStoreConnect/ai.git storeconnect-ai
 gemini extensions install ./storeconnect-ai/providers/gemini/storeconnect
-gemini extensions list
 ```
 
 Use `/agents list` to inspect the specialist agents loaded from the

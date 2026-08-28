@@ -121,13 +121,14 @@ Enterprise, Google Cloud, and paid-key workflows; see Google's
 [transition announcement](https://github.com/google-gemini/gemini-cli/discussions/27274)
 for the current audience split.
 
-The extension manifest is nested in this monorepo. Install its provider
-directory from a checkout rather than passing the repository root URL, then add
-a project connection and sign in:
+Install the extension from the latest release, then add a project connection
+and sign in. Each release attaches the provider directory as an archive with
+`gemini-extension.json` at its root, so the repository URL works even though
+the manifest is nested in this monorepo; to run unreleased changes, install
+`providers/gemini/storeconnect` from a checkout instead.
 
 ```bash
-git clone --depth 1 https://github.com/GetStoreConnect/ai.git storeconnect-ai
-gemini extensions install ./storeconnect-ai/providers/gemini/storeconnect
+gemini extensions install https://github.com/GetStoreConnect/ai
 gemini extensions list
 gemini mcp add --transport http --scope project \
   storeconnect "https://<store-domain>/mcp"

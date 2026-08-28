@@ -1,0 +1,111 @@
+name: Release
+
+# Publishes a GitHub release carrying the Gemini CLI extension archive.
+#
+# `gemini extensions install <repository-url>` prefers the latest GitHub
+# release and expects `gemini-extension.json` at the root of the release
+# archive; without a release it falls back to cloning and expects the manifest
+# at the repository root. This repository is a multi-provider monorepo with
+# the manifest at `providers/gemini/storeconnect/`, so a release carrying a
+# re-rooted archive is what lets a plain repository-URL install work.
+#
+# Two choices here are deliberate:
+#
+#   * It runs on every push to the default branch and no-ops unless the
+#     package version has no release yet. Pushes arrive from the knowledge
+#     base's publish workflow, so bumping the version there produces the
+#     release here with no manual step on this repository.
+#
+#   * The release carries exactly one uploaded asset. Gemini CLI matches
+#     assets by platform-prefixed filename (`darwin.arm64.` and the like) and
+#     accepts a generic asset only when it is the sole asset on the release;
+#     with several unmatched assets it falls back to the source tarball, whose
+#     root holds no manifest, and the install breaks. The extension is plain
+#     markdown and JSON, so one archive serves every platform. Never attach a
+#     second asset to these releases.
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+# Never cancel a release in flight: a cancelled run could leave a tag with no
+# asset attached. Runs are serialized instead.
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+jobs:
+  gemini-extension:
+    name: Gemini extension archive
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v7
+
+      - name: Decide whether this version needs a release
+        id: version
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          version="$(jq --raw-output .version providers/gemini/storeconnect/gemini-extension.json)"
+          echo "version=${version}" >> "$GITHUB_OUTPUT"
+          if gh release view "v${version}" --json tagName >/dev/null 2>&1; then
+            echo "needed=false" >> "$GITHUB_OUTPUT"
+            echo "v${version} is already released; nothing to do."
+          else
+            echo "needed=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Build the extension archive
+        if: steps.version.outputs.needed == 'true'
+        run: |
+          set -euo pipefail
+          tar --create --gzip \
+            --file storeconnect-gemini.tar.gz \
+            --directory providers/gemini/storeconnect .
+          # Gemini CLI rejects an archive whose manifest is not at its root.
+          tar --list --file storeconnect-gemini.tar.gz | grep --quiet --line-regexp './gemini-extension.json'
+
+      - name: Publish the release
+        if: steps.version.outputs.needed == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          set -euo pipefail
+          {
+            echo "StoreConnect AI packages ${VERSION}."
+            echo
+            echo "The attached archive is the Gemini CLI extension. Install it with:"
+            echo
+            echo '    gemini extensions install https://github.com/GetStoreConnect/ai'
+            echo
+            echo "Every other provider package installs from the repository itself; see the README."
+          } > release-notes.md
+          gh release create "v${VERSION}" storeconnect-gemini.tar.gz \
+            --target "${GITHUB_SHA}" \
+            --title "v${VERSION}" \
+            --notes-file release-notes.md
+
+      - name: Summarize
+        if: always()
+        run: |
+          {
+            if [ "${{ steps.version.outputs.needed }}" = "true" ]; then
+              echo "## Released"
+              echo
+              echo "v${{ steps.version.outputs.version }} with the Gemini extension archive."
+            else
+              echo "## Nothing to release"
+              echo
+              echo "v${{ steps.version.outputs.version }} is already released."
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"
