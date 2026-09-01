@@ -364,7 +364,7 @@ Renders a registered StoreConnect form with its required fields and validation s
 {% endform %}
 ```
 
-Field access is `form.fields["<name>"]`, **not** `form.<name>`. `{{ form.quantity.name }}` renders blank.
+Field access is `form.fields["<name>"]`, **not** `form.<name>`. A bare `form.<name>` is not on the Drop, so under strict variables it raises and the page shows `Liquid error (line N): undefined method quantity` where the value belonged.
 
 The `form` Drop has exactly three attributes: `fields`, `errors`, `path`. A field exposes `name`, `id`, `value`, `original_value`, `required?`, `errors` — and **no `label`**, so supply your own label text. `form.errors` is a collection of error objects, each with `field`, `messages` and `full_messages`; the field name is `"base"` for form-level errors.
 

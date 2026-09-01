@@ -1357,7 +1357,7 @@ Available inside `{% form %}` blocks. Exactly three attributes — no dynamic fi
 | `errors` | Collection[FormErrorDrop] | Validation errors, including form-level ones under field `"base"` |
 | `path` | String | The form's action path |
 
-> **`form.<field_name>` does not work.** `{{ form.quantity.name }}` renders blank. Use `{{ form.fields["quantity"].name }}`.
+> **`form.<field_name>` does not work.** `{{ form.quantity.name }}` is not on the Drop, so under strict variables it renders `Liquid error (line N): undefined method quantity` into the page. Use `{{ form.fields["quantity"].name }}`.
 
 ### FormFieldDrop
 

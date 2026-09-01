@@ -46,8 +46,8 @@
     </div>
   {% endfor %}
   {% form "apply-voucher" %}
-    <input name="{{ form.code.name }}" placeholder="{{ 'cart.voucher_code' | t }}">
-    <input name="{{ form.pin.name }}" type="password" placeholder="PIN">
+    <input name="{{ form.fields["code"].name }}" placeholder="{{ 'cart.voucher_code' | t }}">
+    <input name="{{ form.fields["pin"].name }}" type="password" placeholder="PIN">
     <button type="submit">{{ "cart.apply" | t }}</button>
   {% endform %}
 

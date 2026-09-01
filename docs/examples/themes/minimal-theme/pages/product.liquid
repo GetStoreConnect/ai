@@ -77,7 +77,7 @@
       {% if current_product.can_add_to_cart? and current_product.available_only_in_bundle? == false %}
         {% form "add-to-cart", product: current_product %}
           <label for="quantity">{{ "products.show.quantity" | t }}</label>
-          <input type="number" id="quantity" name="{{ form.quantity.name }}" value="1" min="1">
+          <input type="number" id="quantity" name="{{ form.fields["quantity"].name }}" value="1" min="1">
           <button type="submit">{{ "products.show.add_to_cart" | t }}</button>
         {% endform %}
       {% endif %}

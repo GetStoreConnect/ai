@@ -18,7 +18,7 @@
 
     {% if product.can_select_quantity? %}
       <label for="atc-qty">{{ "products.show.quantity" | t }}</label>
-      <input type="number" id="atc-qty" name="{{ form.quantity.name }}"
+      <input type="number" id="atc-qty" name="{{ form.fields["quantity"].name }}"
              value="1" min="1"
              {% if product.maximum_quantity %}max="{{ product.maximum_quantity }}"{% endif %}>
     {% endif %}
