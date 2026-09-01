@@ -76,7 +76,7 @@ FormField:
 
 There is no `label`, `type`, `placeholder`, `hint`, or `options` attribute. Label text, input type, and option lists are the theme's job.
 
-Templates render in strict-variable mode, so dot-access to an attribute that does not exist — `form.username`, `field.label` — is an undefined drop method. It emits `Liquid error (line N): undefined method <name>` into the page and reports to the platform Console. Bracket lookup behaves differently and more forgivingly: `form.fields["not_a_field"]` simply returns nil, so `{% if field %}` is the right guard for a conditionally present field.
+Templates render in strict-variable mode, so dot-access to an attribute that does not exist — `form.username`, `field.label` — is an undefined drop method. It renders as an empty string in the page, with no error text, and reports `undefined method <name>` to the platform Console. Bracket lookup behaves differently and more forgivingly: `form.fields["not_a_field"]` simply returns nil, so `{% if field %}` is the right guard for a conditionally present field.
 
 `field.value` and `field.original_value` are customer-supplied strings and are not escaped for you. Pipe them through `escape` in an HTML attribute or text node and `j` inside a script or JSON string. Never build a URL, `href`, or inline event handler from them.
 
@@ -259,7 +259,7 @@ Field names that do not exist anywhere: `variant_id`, `product_variant_id`, `sku
 | Symptom | Cause | Fix |
 |---|---|---|
 | `Liquid error (line N): internal` where the form should be | Unregistered form name | Use a name from the enumeration above |
-| `Liquid error (line N): undefined method <name>` appears inside the form | `form.<field>` or `field.<something not in the Drop API>` — strict-variable mode rejects it | `{% assign field = form.fields["<name>"] %}` then use only `name`, `id`, `value`, `original_value`, `errors`, `required?` |
+| A field value renders blank, and the Console logs `undefined method <name>` | `form.<field>` or `field.<something not in the Drop API>` — strict-variable mode rejects it, silently in the page | `{% assign field = form.fields["<name>"] %}` then use only `name`, `id`, `value`, `original_value`, `errors`, `required?` |
 | Inputs render but nothing is saved; server reports the field as blank | The input `name` was typed by hand and does not match the form's field name | Render `name="{{ field.name }}"` from the Drop |
 | Form submits but validation errors never appear | Either the form reports through flash (promo code, cart, geolocation, privacy, and the remove/activate forms) or generated fields were removed | Render `current_flash` for flash-channel forms; restore the generated form unchanged |
 | Only a generic "form has errors" line shows, never the specific message | `form_errors` prints base-level messages only by default | Render `field.errors` beside each input, or pass `include_fields: true` |
