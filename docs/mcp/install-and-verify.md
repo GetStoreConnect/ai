@@ -10,7 +10,14 @@ Obtain the exact MCP URL from the StoreConnect administrator:
 
 ```text
 https://<store-domain>/mcp
+https://<store-domain>/<store-path>/mcp
 ```
+
+The second form is for a store served at a path, which is how several stores
+share one domain. The commands and templates below all show the pathless form;
+substitute the store's own address, path included, wherever they do. See
+[connect and authenticate](connection-and-auth.md) for how the address is
+resolved and which clients the browser sign-in accepts.
 
 Treat a customer hostname as client information. Public examples must use
 placeholders. A private client or partner implementation repository may retain
@@ -355,12 +362,16 @@ captured sensitive data.
 ## Other MCP clients
 
 Configure a remote Streamable HTTP server named `storeconnect` with the store's
-`https://<store-domain>/mcp` URL and use the client's native OAuth or sign-in
-flow. If the client cannot sign in, stop and follow the current StoreConnect
-and client documentation or an administrator-approved credential interface.
+`https://<store-domain>/mcp` URL, or `https://<store-domain>/<store-path>/mcp`
+where several stores share the domain, and use the client's native OAuth or
+sign-in flow. A client that completes sign-in through its vendor's own hosted
+callback address can do so only where StoreConnect has listed that address; see
+[connect and authenticate](connection-and-auth.md). If the client cannot sign
+in, stop and follow the current StoreConnect and client documentation or an
+administrator-approved credential interface.
 
 Registry-aware clients can use the root [`server.json`](../../server.json) and
-supply only the requested store hostname.
+supply only the requested store address.
 
 ## Verify without making a change
 
@@ -378,7 +389,10 @@ recheck the result.
 
 | Symptom | Safe next step |
 |---|---|
-| StoreConnect sign-in does not open or complete | Confirm the exact HTTPS `/mcp` URL and retry the provider's native sign-in action. |
+| StoreConnect sign-in does not open or complete | Confirm the exact HTTPS MCP URL, including the store's path if it is served at one, and retry the provider's native sign-in action. |
+| Sign-in reports that the client's redirect address is not on the store's allow list | Stop. Ask StoreConnect support to list the client, giving the product name and the address shown with the refusal. |
+| Sign-in reports that the client asked for a different endpoint than the store's | The message names the address the store expects. Correct the address in the client and sign in again. |
+| The address is refused because no store is configured at it, or because several stores share the domain | Use the store's own path in the address. Confirm it with the StoreConnect administrator. |
 | Connection worked earlier but now returns an authentication error | Re-run the client's native sign-in action. |
 | Gemini OAuth does not open or return | Retry from a local browser-capable session; browserless SSH and container sessions cannot complete its loopback flow. |
 | Gemini ignores project MCP settings | Review the intended workspace with `/permissions`; untrusted workspaces do not load project MCP servers. |

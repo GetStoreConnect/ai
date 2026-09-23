@@ -55,6 +55,7 @@ const TARGETS = [
   { file: "providers/copilot/storeconnect/plugin.json", paths: [["version"]] },
   { file: "providers/cursor/storeconnect/.cursor-plugin/plugin.json", paths: [["version"]] },
   { file: "providers/gemini/storeconnect/gemini-extension.json", paths: [["version"]] },
+  { file: "providers/grok/storeconnect/.grok-plugin/plugin.json", paths: [["version"]] },
   {
     file: ".github/plugin/marketplace.json",
     paths: [

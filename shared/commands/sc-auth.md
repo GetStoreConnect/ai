@@ -16,16 +16,24 @@ platform context.
    hostname, reuse a hostname from an earlier session, or derive one from a
    project file.
 2. If the user supplied a connection URL directly, use it exactly as given.
-3. If the user supplied a storefront URL, request that same origin's public
-   discovery document at `/.well-known/mcp.json` and read its advertised
-   connection URL.
+3. If the user supplied a storefront URL, request the discovery document at
+   `/.well-known/mcp.json` under the address the user gave you, keeping any
+   path it carries, and read its advertised connection URL. Where several
+   stores share one domain, each is served at its own path, so
+   `https://store.example.com/au/.well-known/mcp.json` belongs to a different
+   store from `https://store.example.com/.well-known/mcp.json`.
 4. Accept the advertised connection URL only when every check passes:
    - the scheme is HTTPS
    - the host is the same host that was supplied, with no cross-host redirect
-   - the path is exactly `/mcp`
+   - the path is the path the discovery document was requested at, with `/mcp`
+     appended and nothing else: `https://store.example.com/mcp` for a store at
+     the root of its domain, `https://store.example.com/au/mcp` for a store
+     served at `/au`
    - there is no user information, port override, query, or fragment
-5. If the discovery document is unavailable, try only the same-origin `/mcp`
-   path. Do not probe other paths or other services.
+5. If the discovery document is unavailable, try only that same address with
+   `/mcp` appended. Do not probe other paths or other services, and do not drop
+   or add a store path. On a shared domain, dropping or adding one names a
+   different customer's store.
 6. If any check fails, stop and report which check failed. Do not fall back to
    a corrected or guessed URL.
 
@@ -41,6 +49,11 @@ platform context.
    and client documentation or ask the StoreConnect administrator. Do not
    construct headers, name or request token material, or switch to an
    undocumented credential mechanism.
+5. If sign-in is refused with `This client's redirect address is not on this
+   store's allow list.`, stop. The store accepts the browser sign-in only from
+   client callback addresses StoreConnect has listed, and that list is
+   StoreConnect's own configuration rather than anything a store administrator
+   can change. Report the refusal and this product's name to the user.
 
 ## Verify before trusting the connection
 

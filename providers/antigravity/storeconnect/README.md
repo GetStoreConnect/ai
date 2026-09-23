@@ -46,6 +46,9 @@ replace the reserved hostname:
 }
 ```
 
+Where several stores share one domain, each is served at its own path, and
+that path comes before `/mcp`: `https://<store-domain>/<store-path>/mcp`.
+
 Keep the required `serverUrl` key. StoreConnect remote OAuth support for
 Antigravity is preview until it has passed live acceptance for the target store
 and installed Antigravity release.

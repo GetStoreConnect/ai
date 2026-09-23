@@ -6,7 +6,8 @@ provides the live tools and schemas for one store.
 
 ## Safe defaults
 
-- Connect only to the intended store's exact HTTPS `/mcp` URL.
+- Connect only to the intended store's exact HTTPS MCP URL, including the
+  store's path where several stores share a domain.
 - Prefer the client's native OAuth flow.
 - Use placeholders for customer domains and identifiers in public examples.
   A private client or partner project may retain required non-secret project
@@ -22,10 +23,13 @@ provides the live tools and schemas for one store.
 ## Connect
 
 1. Install the relevant skills or provider package.
-2. Obtain the connection from the administrator or the storefront's
-   same-origin `/.well-known/mcp.json` public discovery card.
-3. Add a remote server named `storeconnect` at
-   `https://<store-domain>/mcp`.
+2. Obtain the connection from the administrator, or from the
+   `/.well-known/mcp.json` public discovery card under the storefront address
+   you were given, keeping any path it carries.
+3. Add a remote server named `storeconnect` at `https://<store-domain>/mcp`,
+   or at `https://<store-domain>/<store-path>/mcp` where the store is one of
+   several sharing a domain. See
+   [connect and authenticate](connection-and-auth.md).
 4. Complete the provider's native sign-in flow.
 5. Verify the target with a read-only operation from the live server.
 

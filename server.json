@@ -11,7 +11,7 @@
       "url": "https://{store_domain}/mcp",
       "variables": {
         "store_domain": {
-          "description": "StoreConnect store hostname, without a scheme or path.",
+          "description": "StoreConnect store address, without a scheme: the store hostname, followed by the store's path where several stores share one domain.",
           "placeholder": "store.example.com",
           "format": "string",
           "isRequired": true

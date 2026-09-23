@@ -41,6 +41,9 @@ gemini mcp add --transport http --scope project \
 gemini
 ```
 
+Where several stores share one domain, each is served at its own path, and
+that path comes before `/mcp`: `https://<store-domain>/<store-path>/mcp`.
+
 ```text
 /mcp auth storeconnect
 /mcp list

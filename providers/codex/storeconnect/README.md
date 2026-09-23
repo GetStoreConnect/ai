@@ -34,6 +34,9 @@ For a single-store user-wide connection, the native command is:
 codex mcp add storeconnect --url "https://<store-domain>/mcp"
 ```
 
+Where several stores share one domain, each is served at its own path, and
+that path comes before `/mcp`: `https://<store-domain>/<store-path>/mcp`.
+
 If Codex cannot complete native sign-in, stop and follow the current
 StoreConnect and Codex documentation or an administrator-approved credential
 interface. Credentials must never be committed or placed in prompts.

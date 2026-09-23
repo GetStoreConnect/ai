@@ -17,9 +17,11 @@ The remote URL uses a required variable:
 https://{store_domain}/mcp
 ```
 
-An installer asks the user for the hostname supplied by their StoreConnect
-administrator and resolves the URL locally. A real customer hostname or
-credential must never be added to `server.json`.
+An installer asks the user for the address supplied by their StoreConnect
+administrator and resolves the URL locally. Where several stores share one
+domain, each is served at its own path, so that address is the hostname
+followed by the store's path, such as `store.example.com/au`. A real customer
+hostname or credential must never be added to `server.json`.
 
 Provider configuration files such as `.mcp.json`, `config.toml`, and provider
 settings remain local to the client. The examples under

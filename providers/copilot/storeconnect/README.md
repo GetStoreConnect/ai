@@ -52,6 +52,9 @@ copilot mcp add storeconnect --type http \
   --url "https://<store-domain>/mcp" --tools "*"
 ```
 
+Where several stores share one domain, each is served at its own path, and
+that path comes before `/mcp`: `https://<store-domain>/<store-path>/mcp`.
+
 For one session, pass an otherwise untracked config with
 `copilot --additional-mcp-config @/absolute/path/storeconnect.mcp.json`.
 

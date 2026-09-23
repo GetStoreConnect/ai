@@ -20,7 +20,9 @@ implementations.
 
 1. Copy or merge only the `storeconnect` entry; do not overwrite other servers.
 2. Set the full `https://<store-domain>/mcp` URL in the target implementation
-   configuration or the environment inherited by the client.
+   configuration or the environment inherited by the client. Where several
+   stores share the domain, the store's own path comes first:
+   `https://<store-domain>/<store-path>/mcp`.
 3. Prefer the client's native OAuth flow.
 4. Keep credentials out of tracked files.
 5. After sign-in, verify the intended store, environment, and identity with a

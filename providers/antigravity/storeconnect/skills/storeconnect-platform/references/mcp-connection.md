@@ -5,6 +5,15 @@ Use this procedure when a user asks to connect StoreConnect from a store URL and
 Installing these skills does not connect anything. The operator must explicitly
 connect the intended store using a confirmed storefront URL.
 
+## Contents
+
+- [Discover the connection safely](#discover-the-connection-safely)
+- [Configure and authenticate](#configure-and-authenticate)
+- [The tool surface is per-connection, not fixed](#the-tool-surface-is-per-connection-not-fixed)
+- [Verify before writing](#verify-before-writing)
+- [Use the reviewed write workflow](#use-the-reviewed-write-workflow)
+- [When to use Salesforce tooling](#when-to-use-salesforce-tooling)
+
 ## Discover the connection safely
 
 1. Start only from an HTTPS StoreConnect storefront URL supplied or confirmed by the user.
@@ -16,15 +25,27 @@ connect the intended store using a confirmed storefront URL.
    https://store.example.com/.well-known/mcp.json
    ```
 
-3. Accept the advertised URL only when it uses HTTPS, has the expected storefront host, and has the exact `/mcp` path with no user information, query, or fragment.
+   Where several stores share one domain, each store is served at its own path,
+   and so is its card. Keep whatever path the user gave you and request the card
+   under it. `https://store.example.com/au/.well-known/mcp.json` belongs to a
+   different store from `https://store.example.com/.well-known/mcp.json`.
+
+3. Accept the advertised URL only when it uses HTTPS, has the expected
+   storefront host, and is exactly the address you requested the card at with
+   `/mcp` appended, with no user information, query, or fragment. A store at the
+   root of its domain advertises the first form; a store served at a path
+   advertises the second.
 
    ```
    https://store.example.com/mcp
+   https://store.example.com/au/mcp
    ```
 
-4. If the discovery card is unavailable, configure only the same-origin `/mcp`
-   URL through the AI client's native MCP setup. Do not test it with a browser
-   GET, probe other paths, or try other hosts.
+4. If the discovery card is unavailable, configure that same address with
+   `/mcp` appended through the AI client's native MCP setup, and nothing else.
+   Do not test it with a browser GET, probe other paths, or try other hosts.
+   Never drop the store path the user gave you and never add one they did not.
+   On a shared domain, either one names a different customer's store.
 
 Treat customer hostnames and store identifiers as customer information. They may be retained in
 the access-restricted project configuration used by that client or partner, but must not be copied
@@ -38,6 +59,16 @@ Add the discovered URL as a remote Streamable HTTP server using the AI client's 
 1. Add the MCP URL without embedding credentials.
 2. Start the client's login action.
 3. Complete authentication only in the StoreConnect page the client opens.
+
+Sign-in binds the session to the store at the address it was started from, so a session started at
+one store's path is refused at another's. The store also accepts the browser sign-in only from
+client callback addresses StoreConnect has listed. A client running on the operator's own machine
+is always accepted on loopback. A client that hands the sign-in to its vendor's own hosted address
+is accepted only if StoreConnect has listed that address, and is otherwise refused with `This
+client's redirect address is not on this store's allow list.` That list is StoreConnect's own
+configuration, so a store administrator cannot add to it: report the refusal and the client's name
+to the operator, and do not retry, substitute another address, or fall back to a credential the
+operator did not supply.
 
 Do not request, repeat, copy, or store credentials in chat, URLs, commands, screenshots,
 repository files, project instructions, or example configuration. Do not invent header formats or

@@ -62,6 +62,9 @@ grok mcp doctor storeconnect
 grok inspect
 ```
 
+Where several stores share one domain, each is served at its own path, and
+that path comes before `/mcp`: `https://<store-domain>/<store-path>/mcp`.
+
 StoreConnect MCP support for Grok Build is preview until it has passed live
 acceptance for the target store and installed Grok release. Start `grok`, open
 `/mcps`, select `storeconnect`, press `i`, and complete browser sign-in. Keep

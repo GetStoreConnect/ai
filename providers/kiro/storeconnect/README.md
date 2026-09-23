@@ -62,7 +62,8 @@ Merge the `storeconnect` entry from the public
 [`kiro.mcp.json`](https://github.com/GetStoreConnect/ai/blob/main/templates/mcp/kiro.mcp.json)
 template into project `.kiro/settings/mcp.json` or user
 `~/.kiro/settings/mcp.json`. Replace the reserved hostname only in the local
-copy. A private client or partner implementation repository may retain required
+copy. Where several stores share one domain, each is served at its own path,
+and that path comes before `/mcp`: `https://<store-domain>/<store-path>/mcp`. A private client or partner implementation repository may retain required
 customer domains and non-secret project identifiers; public examples must use
 placeholders, and credentials must never be committed.
 

@@ -46,8 +46,9 @@ credentials.
 
 ## Connecting to a store
 
-Obtain the intended store's exact `https://<store-domain>/mcp` URL from the
-StoreConnect administrator. Merge the connection-only entry from
+Obtain the intended store's exact `https://<store-domain>/mcp` URL, or
+`https://<store-domain>/<store-path>/mcp` where several stores share the domain,
+from the StoreConnect administrator. Merge the connection-only entry from
 `templates/mcp/kiro.mcp.json` into the target project's Kiro MCP settings,
 replace the placeholder there, and complete Kiro's native browser sign-in.
 

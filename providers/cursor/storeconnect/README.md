@@ -39,7 +39,9 @@ Copy the public
 [`cursor.mcp.json`](https://github.com/GetStoreConnect/ai/blob/main/templates/mcp/cursor.mcp.json)
 template to project `.cursor/mcp.json`, set `STORECONNECT_MCP_URL` to the exact
 store `/mcp` URL in Cursor's environment, and complete native sign-in when
-prompted. Prefer project scope when working with more than one store.
+prompted. Prefer project scope when working with more than one store. Where
+several stores share one domain, each is served at its own path, and that path
+comes before `/mcp`: `https://<store-domain>/<store-path>/mcp`.
 
 ```shell
 agent mcp list

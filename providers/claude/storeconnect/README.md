@@ -23,6 +23,9 @@ claude mcp login storeconnect
 claude mcp list
 ```
 
+Where several stores share one domain, each is served at its own path, and
+that path comes before `/mcp`: `https://<store-domain>/<store-path>/mcp`.
+
 If Claude Code cannot complete native sign-in, stop and follow the current
 StoreConnect and Claude Code documentation or an administrator-approved
 credential interface. Credentials must never be committed or placed in

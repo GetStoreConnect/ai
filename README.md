@@ -103,17 +103,20 @@ Three things make this simpler than it sounds:
   extra service to pay for, no separate app in Salesforce.
 - **The address belongs to your store alone.** Every store has its own. That is
   why installing skills cannot pick a store for you, and why nobody else's
-  connection will work for yours.
+  connection will work for yours. Where several stores share one domain, each is
+  served at its own path, and the path comes before `/mcp`:
+  `https://your-store.example.com/au/mcp`.
 - **You sign in as yourself.** The assistant inherits your access and nothing
   more. If you cannot do something in StoreConnect, neither can it.
 
 ### Check whether your store is ready
 
 Open this address in any browser, with your own store's domain in place of the
-example:
+example. If your store is served at a path, that path goes first:
 
 ```text
 https://your-store.example.com/.well-known/mcp.json
+https://your-store.example.com/au/.well-known/mcp.json
 ```
 
 - **A short block of technical text (JSON)?** Your store supports MCP. That page
@@ -161,7 +164,9 @@ version, the connection works with no change to anything you installed here.
 ### Connecting, once your store is ready
 
 1. Get the exact address from your StoreConnect administrator. It is your store
-   domain with `/mcp` on the end, over HTTPS, and nothing else.
+   domain with `/mcp` on the end, over HTTPS, and nothing else. If your store
+   shares its domain with other stores, your store's own path sits between the
+   two: `https://your-store.example.com/au/mcp`.
 2. In your AI tool, add a remote MCP server named `storeconnect` at that
    address.
 3. Use the tool's own **Sign in** or **Log in** action and complete it in the
