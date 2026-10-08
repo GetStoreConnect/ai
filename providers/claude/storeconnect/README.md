@@ -1,9 +1,29 @@
-# StoreConnect for Claude Code
+# StoreConnect Agent Skills for Claude
 
 This package provides StoreConnect skills, specialist agents, and slash commands
-for Claude Code. Installing it does not connect a store or include credentials.
+for Claude Code, Cowork, and the Claude web, desktop, and mobile apps. Installing
+it does not connect a store or include credentials.
 
 ## Install
+
+Install from one source only. Both sources provide the same plugin.
+
+### From the Claude directory
+
+StoreConnect Agent Skills is listed in Anthropic's plugin directory. In Claude,
+open **Customize**, then **Plugins**, search for StoreConnect, and select
+**Add**, or open the
+[directory listing](https://claude.ai/customize/plugins/id/8467d2f4-6bd5-4b19-a9e3-a353610db5f4%40anthropic-plugin-directory)
+directly. Claude Code receives the plugin through account sync when it is
+signed in with the same claude.ai account.
+
+In the Claude web, desktop, and mobile apps, the specialist agents are not used
+and the slash commands load as skills.
+
+### From this repository
+
+Use this source for Claude Code signed in with an API key, or for a scripted
+install:
 
 ```bash
 claude plugin marketplace add GetStoreConnect/ai \

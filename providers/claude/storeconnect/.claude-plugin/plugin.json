@@ -1,15 +1,14 @@
 {
-  "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
   "name": "storeconnect",
   "displayName": "StoreConnect Agent Skills",
-  "version": "0.9.3",
-  "description": "Portable skills and specialist agents for building, reviewing, and operating StoreConnect storefronts and POS.",
+  "version": "0.9.4",
+  "description": "Portable skills and specialist agents for building, reviewing, and operating StoreConnect storefronts and point of sale (POS).",
   "author": {
     "name": "Client Success",
     "email": "support@storeconnect.com",
     "url": "https://github.com/GetStoreConnect"
   },
-  "homepage": "https://github.com/GetStoreConnect/ai",
+  "homepage": "https://support.storeconnect.com/ai",
   "repository": "https://github.com/GetStoreConnect/ai",
   "license": "MIT",
   "keywords": [
@@ -18,6 +17,13 @@
     "liquid",
     "ecommerce",
     "theme",
-    "pos"
-  ]
+    "pos",
+    "point-of-sale",
+    "storefront"
+  ],
+  "icon": "./assets/icon.png",
+  "documentationUrl": "https://support.storeconnect.com/ai",
+  "supportUrl": "https://support.storeconnect.com",
+  "privacyPolicyUrl": "https://storeconnect.com/privacy-policy",
+  "termsOfServiceUrl": "https://storeconnect.com/terms-and-conditions"
 }

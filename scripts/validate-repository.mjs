@@ -49,7 +49,9 @@ const PROVIDERS = {
     packageRoot: "providers/claude/storeconnect",
     skillRoot: "providers/claude/storeconnect/skills",
     manifest: "providers/claude/storeconnect/.claude-plugin/plugin.json",
-    entries: [".claude-plugin", "LICENSE", "README.md", "agents", "commands", "skills"],
+    // `assets` holds the icon for the Anthropic directory listing, which the
+    // directory reads from a file inside the plugin rather than a hosted URL.
+    entries: [".claude-plugin", "LICENSE", "README.md", "agents", "assets", "commands", "skills"],
     agents: EXPECTED_AGENTS.map((name) => `${name}.md`),
     commands: EXPECTED_COMMANDS.map((name) => `${name}.md`),
   },
@@ -70,9 +72,9 @@ const PROVIDERS = {
     packageRoot: "providers/cursor/storeconnect",
     skillRoot: "providers/cursor/storeconnect/skills",
     manifest: "providers/cursor/storeconnect/.cursor-plugin/plugin.json",
-    // `assets` holds the Marketplace listing logo. Cursor is the only package
-    // carrying one, because it is the only host that asks for a committed file
-    // rather than a hosted URL.
+    // `assets` holds the Marketplace listing logo. Cursor and Claude are the
+    // only packages carrying one, because they are the only hosts that ask for
+    // a committed file rather than a hosted URL.
     entries: [".cursor-plugin", "LICENSE", "README.md", "agents", "assets", "commands", "skills"],
     agents: EXPECTED_AGENTS.map((name) => `${name}.md`),
     commands: EXPECTED_COMMANDS.map((name) => `${name}.md`),
@@ -129,6 +131,7 @@ const GENERATED_COMMAND_NOTICE = "<!-- Generated from shared/commands. Do not ed
 const GENERATED_CONTEXT_NOTICE =
   "<!-- Generated from shared/provider-fragments/gemini-extension-context.md. Do not edit this copy. -->";
 const CLAUDE_THEME_REVIEWER_TOOLS = "Read, Grep, Glob, WebFetch, WebSearch";
+const CLAUDE_LISTING_URL_FIELDS = ["documentationUrl", "supportUrl", "privacyPolicyUrl", "termsOfServiceUrl"];
 const COPILOT_THEME_REVIEWER_TOOLS = '["read", "search", "web"]';
 
 const MCP_TEMPLATE_FILES = [
@@ -588,14 +591,55 @@ function validateAuthorShape(author, filePath, includeUrl) {
   if (includeUrl) requireString(author, "url", filePath);
 }
 
+// Anthropic's directory asks for the listing icon as an SVG or a 512x512 PNG.
+// A PNG records its size in the IHDR chunk, which the format requires first.
+function validateListingIcon(iconPath, manifestPath) {
+  if (!exists(iconPath)) {
+    addFinding(manifestPath, `icon file is missing: ${iconPath}`);
+    return;
+  }
+  const bytes = fs.readFileSync(full(iconPath));
+  const signature = Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]);
+  if (bytes.length < 24 || !bytes.subarray(0, 8).equals(signature) || bytes.toString("latin1", 12, 16) !== "IHDR") {
+    addFinding(iconPath, "icon must be a PNG file");
+    return;
+  }
+  const width = bytes.readUInt32BE(16);
+  const height = bytes.readUInt32BE(20);
+  if (width !== 512 || height !== 512) {
+    addFinding(iconPath, `icon must be 512x512, found ${width}x${height}`);
+  }
+}
+
 function validateProviderManifestShape(providerName, manifest, filePath) {
   if (!manifest) return;
   const common = ["name", "version", "description", "author", "homepage", "repository", "license", "keywords"];
   if (providerName === "claude") {
-    assertExactKeys(manifest, ["$schema", ...common.slice(0, 1), "displayName", ...common.slice(1)], filePath, "Claude manifest");
-    requireExactString(manifest, "$schema", "https://json.schemastore.org/claude-code-plugin-manifest.json", filePath);
+    // Anthropic's directory reads the icon and the four listing URLs from
+    // plugin.json, never from a marketplace entry, and Claude Code ignores
+    // them at load time. Each URL must be https.
+    //
+    // No $schema: the schemastore manifest schema is not Anthropic-hosted and
+    // predates displayName and every listing field, so it validated nothing
+    // here. It was also the only `$` token in the file when the directory scan
+    // cited plugin.json under its credential-from-environment rule.
+    assertExactKeys(
+      manifest,
+      [...common.slice(0, 1), "displayName", ...common.slice(1), ...CLAUDE_LISTING_URL_FIELDS, "icon"],
+      filePath,
+      "Claude manifest",
+    );
     requireString(manifest, "displayName", filePath);
     validateAuthorShape(manifest.author, filePath, true);
+    for (const field of CLAUDE_LISTING_URL_FIELDS) {
+      const value = requireString(manifest, field, filePath);
+      if (value !== null && !value.startsWith("https://")) {
+        addFinding(filePath, `${field} must be an https:// URL, found ${JSON.stringify(value)}`);
+      }
+    }
+    requireExactString(manifest, "icon", "./assets/icon.png", filePath);
+    const claudeRoot = path.dirname(path.dirname(filePath));
+    validateListingIcon(`${claudeRoot}/assets/icon.png`, filePath);
   } else if (providerName === "codex") {
     assertExactKeys(manifest, [...common, "skills", "interface"], filePath, "Codex manifest");
     validateAuthorShape(manifest.author, filePath, true);

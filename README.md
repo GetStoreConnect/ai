@@ -43,8 +43,8 @@ ready-made commands). Pick yours:
 
 | AI product | Install |
 |---|---|
-| Claude Code | `claude plugin marketplace add GetStoreConnect/ai --sparse .claude-plugin providers/claude/storeconnect` then `claude plugin install storeconnect@storeconnect-ai` |
-| Claude web, desktop, mobile | Skills come with the connection. See [install and verify](docs/mcp/install-and-verify.md). |
+| Claude web, desktop, mobile, and Cowork | Add **StoreConnect Agent Skills** from the [Claude directory](https://claude.ai/customize/plugins/id/8467d2f4-6bd5-4b19-a9e3-a353610db5f4%40anthropic-plugin-directory) |
+| Claude Code | The directory plugin above, which reaches Claude Code through claude.ai account sync. With an API key, or for a scripted install: `claude plugin marketplace add GetStoreConnect/ai --sparse .claude-plugin providers/claude/storeconnect` then `claude plugin install storeconnect@storeconnect-ai` |
 | Codex and ChatGPT | `codex plugin marketplace add GetStoreConnect/ai --ref main` then `codex plugin add storeconnect@storeconnect-ai` |
 | GitHub Copilot CLI | `copilot plugin marketplace add GetStoreConnect/ai` then `copilot plugin install storeconnect@storeconnect-ai` |
 | Cursor | Uses the package at `providers/cursor/storeconnect` |

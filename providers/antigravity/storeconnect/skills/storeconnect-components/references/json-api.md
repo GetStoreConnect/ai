@@ -89,7 +89,7 @@ Rules:
 - **Dispatch a documented reload event only after the supported form flow
   reports success.** On failure, show the platform message and leave the page
   alone.
-- **Never `eval` a response body**, and never inject a response's `<script>` into the page to make it run.
+- **Treat a response body as markup and data, never as code**, and never re-insert a response's `<script>` elements into the page.
 
 ## Which forms can submit remotely
 

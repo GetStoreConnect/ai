@@ -105,7 +105,7 @@ const state = JSON.parse(el.dataset.exampleState)
 
 Never interpolate a Liquid value into an inline `<script>` body: script content is raw text, so
 `| escape` corrupts it and an unescaped `</script>` in any string value breaks out of the block.
-Never `eval` a fetched response body.
+Never treat a fetched response body as code.
 
 **Only reload what changed, and never on the happy path alone.** Dispatch a reload event only
 after the mutation succeeded; handle the failure branch with a message, not a silent reload.

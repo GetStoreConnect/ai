@@ -60,9 +60,17 @@ for plan-specific UI and network requirements.
 Enable the connector only in conversations that need it. Never paste an access
 secret into a conversation.
 
+For the StoreConnect skills, add **StoreConnect Agent Skills** from the
+[Claude directory](https://claude.ai/customize/plugins/id/8467d2f4-6bd5-4b19-a9e3-a353610db5f4%40anthropic-plugin-directory).
+The plugin adds guidance only and does not connect a store.
+
 ## Claude Code
 
-Install the optional StoreConnect plugin from the public marketplace:
+The optional StoreConnect plugin is listed in the Claude directory as
+**StoreConnect Agent Skills**. Added on claude.ai, it reaches Claude Code
+through account sync when Claude Code is signed in with the same account. With
+an API key, or for a scripted install, install it from the public marketplace
+instead:
 
 ```bash
 claude plugin marketplace add GetStoreConnect/ai \

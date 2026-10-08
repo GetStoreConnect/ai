@@ -122,11 +122,11 @@ write a single tag.
   `storeconnect-liquid` for cast rules.
 - **Do not use a controller for privileged administration or payment data.** Never
   place a literal credential in a template, browser asset, repository file, or
-  manually constructed authorization value. Where an approved integration uses
-  the established Store Variable pattern, keep the value server-side in the
-  documented option and never render or log it. Card data, bank details, and
-  payment mutation belong in Salesforce with proper enforcement
-  (`storeconnect-apex-integration`).
+  manually constructed authorization value. For an authenticated call, use only
+  the documented Store Variable integration pattern or another supported
+  server-managed integration, and never render or log the configured value. Card
+  data, bank details, and payment mutation belong in Salesforce with proper
+  enforcement (`storeconnect-apex-integration`).
 - **Outbound calls go only to an approved endpoint.** Never build the URL for
   `{% api %}` from a request value, and never forward request headers, cookies,
   raw paths, customer identifiers, record IDs, or payment details to an external
