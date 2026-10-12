@@ -59,13 +59,31 @@ If a field name collides, rename the merchant field distinctly, for example
 `Client_Outlet_Id__c`, and map that instead.
 
 The immutability rule means **you cannot repoint a mapping.** To change the target, delete the
-mapping and create a new one. Only `s_c__Access_Level__c` and `s_c__Indexed__c` are editable.
+mapping and create a new one, which costs two full re-syncs of the object (see below). Only
+`s_c__Access_Level__c` and `s_c__Indexed__c` are editable, and editing them does not re-sync.
 
 **Formula fields are a poor choice.** Their values change without producing a change event, so the
 storefront copy drifts. Map a stored field instead.
 
-Adding a mapping can take time to become available across existing records. Group related
-mapping changes into one reviewed operation, then wait and verify before continuing.
+**Adding or deleting a mapping re-syncs every record of the object.** StoreConnect clears the sync
+marker on every row it holds for that object and requests all of the object's records from
+Salesforce again. On an object with hundreds of thousands or millions of records (**Order**,
+**Account**, **Contact**, `s_c__Subscription__c`), this can run for hours, delay new records
+reaching the storefront, and slow the site. Before creating or deleting a mapping on a large
+object:
+
+- Treat it as a production change that needs human approval and a time outside business hours.
+  For an object with millions of records, involve StoreConnect support first.
+- Insert every mapping for the object in one operation. Mappings saved together can share one
+  re-sync; added one at a time, each starts another.
+- Never delete and recreate a mapping to "refresh" a field. That is two full re-syncs.
+- On a standard object with per-record sync opt-in (`StoreConnect_Sync__c`), only opted-in records
+  are re-sent. Custom objects always re-send every record.
+
+Then wait and verify the mapped value renders before continuing. Sync Summaries row counts do
+not show re-sync progress: the re-sync updates existing rows rather than adding them. No
+customer-visible signal marks completion; to confirm a re-sync has finished, ask StoreConnect
+support.
 
 ## Read a mapped value
 
