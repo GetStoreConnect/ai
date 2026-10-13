@@ -26,9 +26,17 @@ connect the intended store using a confirmed storefront URL.
    ```
 
    Where several stores share one domain, each store is served at its own path,
-   and so is its card. Keep whatever path the user gave you and request the card
-   under it. `https://store.example.com/au/.well-known/mcp.json` belongs to a
-   different store from `https://store.example.com/.well-known/mcp.json`.
+   and so is its card. `https://store.example.com/au/.well-known/mcp.json`
+   belongs to a different store from `https://store.example.com/.well-known/mcp.json`.
+   A store path is one segment directly after the host, so request the card at
+   the store's home page address: the host alone, or the host and that one
+   segment. If the user gave a deeper address, such as a product or category
+   page, ask them for the store's home page address. Do not shorten it yourself.
+   The first segment can be a store path or an ordinary page of the root store,
+   and a wrong guess names a different customer's store.
+
+   If the card answers that no store is configured at the address, the address
+   is not a store's home page. Stop and ask the user for it.
 
 3. Accept the advertised URL only when it uses HTTPS, has the expected
    storefront host, and is exactly the address you requested the card at with
@@ -41,7 +49,7 @@ connect the intended store using a confirmed storefront URL.
    https://store.example.com/au/mcp
    ```
 
-4. If the discovery card is unavailable, configure that same address with
+4. If the discovery card does not respond, configure that same address with
    `/mcp` appended through the AI client's native MCP setup, and nothing else.
    Do not test it with a browser GET, probe other paths, or try other hosts.
    Never drop the store path the user gave you and never add one they did not.
@@ -62,10 +70,12 @@ Add the discovered URL as a remote Streamable HTTP server using the AI client's 
 
 Sign-in binds the session to the store at the address it was started from, so a session started at
 one store's path is refused at another's. The store also accepts the browser sign-in only from
-client callback addresses StoreConnect has listed. A client running on the operator's own machine
-is always accepted on loopback. A client that hands the sign-in to its vendor's own hosted address
-is accepted only if StoreConnect has listed that address, and is otherwise refused with `This
-client's redirect address is not on this store's allow list.` That list is StoreConnect's own
+client callback addresses StoreConnect has listed. A client on the operator's own machine is
+accepted when the callback is an `http` address on `localhost`, `127.0.0.1` or `::1`, on any port.
+Being installed locally is not enough: a client whose callback is an app address, such as
+`cursor://`, or the vendor's hosted address is accepted only if StoreConnect has listed that
+address, and is otherwise refused with `This client's redirect address is not on this store's
+allow list. Contact StoreConnect support to have it added.` That list is StoreConnect's own
 configuration, so a store administrator cannot add to it: report the refusal and the client's name
 to the operator, and do not retry, substitute another address, or fall back to a credential the
 operator did not supply.

@@ -24,8 +24,9 @@ provides the live tools and schemas for one store.
 
 1. Install the relevant skills or provider package.
 2. Obtain the connection from the administrator, or from the
-   `/.well-known/mcp.json` public discovery card under the storefront address
-   you were given, keeping any path it carries.
+   `/.well-known/mcp.json` public discovery card under the store's home page
+   address. A store path is one segment directly after the host, so a product
+   or category page address is not the place to request it.
 3. Add a remote server named `storeconnect` at `https://<store-domain>/mcp`,
    or at `https://<store-domain>/<store-path>/mcp` where the store is one of
    several sharing a domain. See

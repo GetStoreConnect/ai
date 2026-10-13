@@ -55,6 +55,14 @@ If Cursor cannot complete native sign-in, stop and follow the current
 StoreConnect and Cursor documentation or an administrator-approved credential
 interface.
 
+StoreConnect accepts Cursor's sign-in when Cursor's callback is an `http`
+address on `localhost` or `127.0.0.1`. Some Cursor installations send
+`cursor://anysphere.cursor-mcp/oauth/callback` instead, which StoreConnect does
+not accept. The store then refuses the sign-in with `This client's redirect
+address is not on this store's allow list.` and shows that address. Ask
+StoreConnect support about the address, or use an administrator-approved
+credential.
+
 Inspect the configured project URL before enabling the server. Keep normal
 per-tool approvals enabled; do not use global `--approve-mcps` during initial
 setup.

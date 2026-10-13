@@ -17,11 +17,16 @@ another's.
 
 Use the exact HTTPS URL supplied by the StoreConnect administrator. When a user
 instead supplies a storefront URL, request the `/.well-known/mcp.json` discovery
-card under that same address, keeping any path it carries, and accept its
-advertised MCP URL only when it uses the expected HTTPS host and is the address
-the card was requested at with `/mcp` appended, with no user information, query,
-or fragment. If the card is unavailable, try only that same address with `/mcp`
-appended. Do not probe other paths, drop or add a store path, derive a URL from
+card under the store's home page address, and accept its advertised MCP URL only
+when it uses the expected HTTPS host and is the address the card was requested
+at with `/mcp` appended, with no user information, query, or fragment. A store
+path is one segment directly after the host. If the user supplied a deeper
+address, such as a product or category page, ask for the store's home page
+address rather than shortening it: the first segment can be a store path or an
+ordinary page of the root store. If the card answers that no store is configured
+at the address, stop and ask for the home page address. If the card does not
+respond, try only that same address with `/mcp` appended. Do not probe other
+paths, drop or add a store path, derive a URL from
 another service, reuse another customer's connection, or commit a resolved
 customer hostname to a public project. A private client or partner
 implementation repository may retain required customer domains and non-secret
@@ -61,17 +66,18 @@ endpoint, authentication route, or direct data write.
 ## Clients the browser sign-in accepts
 
 The store completes a browser sign-in only for client callback addresses
-StoreConnect has listed. Any client running on the operator's own machine is
-accepted on an `http` address at `localhost`, `127.0.0.1` or `::1`, on any
-port, which covers every locally installed client. A client that hands the
-sign-in to its vendor's own hosted address is accepted only where StoreConnect
-has listed that address. At the time of writing that covers Claude, ChatGPT,
-Google Antigravity, and Agentforce Vibes.
+StoreConnect has listed. A client running on the operator's own machine is
+accepted when the callback is an `http` address at `localhost`, `127.0.0.1` or
+`::1`, on any port. Being installed locally is not enough on its own: a client
+whose callback is an app address, such as `cursor://`, or the vendor's
+hosted address is accepted only where StoreConnect has listed that address. At
+the time of writing that covers Claude, ChatGPT, Google Antigravity, and
+Agentforce Vibes.
 
 Anything else is refused with:
 
 ```text
-This client's redirect address is not on this store's allow list.
+This client's redirect address is not on this store's allow list. Contact StoreConnect support to have it added.
 ```
 
 That list is StoreConnect's own configuration, not the store's, so a store

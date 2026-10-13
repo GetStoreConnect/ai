@@ -1,6 +1,6 @@
 {
   "name": "@getstoreconnect/ai",
-  "version": "0.9.4",
+  "version": "0.9.5",
   "private": true,
   "description": "Validation and generation tooling for the StoreConnect AI monorepo",
   "type": "module",
