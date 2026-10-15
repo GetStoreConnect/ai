@@ -128,11 +128,14 @@ CLS is a ranking signal.
 |---|---|
 | Above the fold, largest element | `fetchpriority="high"`, **no** `loading="lazy"`, `decoding="sync"` or omitted |
 | Below the fold | `loading="lazy" decoding="async"` |
-| In a carousel past the first slide | `loading="lazy"` |
+| In a custom carousel past the first slide | `loading="lazy"` |
+| In the base slideshow (`blocks/slideshow`) | **no** `loading="lazy"` on any slide, including the first |
 
 `loading="lazy"` on the hero image is a direct LCP regression and is a Warning every time.
-Note that the base theme sets `loading="lazy"` on almost nothing, so on a base-derived theme
-the more common finding is the opposite: no lazy loading anywhere below the fold.
+
+The base slideshow never starts when its slide images are lazy-loaded, and the base Image block
+always lazy-loads. Report it as Critical; fix with a `blocks/slideshow` override that loads slide
+images eagerly. The base theme already lazy-loads cards, menus, and featured blocks.
 
 ## Image checks in order of value
 

@@ -254,7 +254,6 @@ the site silently:
 - `<html lang="{{ current_store.locale }}">` and `<meta name="viewport" content="width=device-width, initial-scale=1.0">`
 - `{% render "content_security_policy_header" %}`
 - `{% render "meta_data", title: title, meta_keywords: meta_keywords, meta_description: meta_description %}` - all SEO and social markup
-- `{% render "organization_data" %}` - Organization structured data
 - Favicon links from `current_store.favicon` (`.pico_url` at 16x16, `.icon_url` at 32x32)
 - `{% render "styles" %}` and `{% render "scripts" %}` - the Style Block and Script Block renderers. Omit them and every Style Block on the store stops applying
 - `{% render "store/head" %}` - the store's Head content block
@@ -304,7 +303,6 @@ Snippets can also act as functions: output only `{{ result | json }}`, and have 
 - `snippets/footer` - site footer. Keep consent controls, forms, components, and other
   visitor-specific output uncached.
 - `snippets/meta_data` - title, canonical, Open Graph. The override point for SEO
-- `snippets/organization_data` - Organization structured data
 - `snippets/breadcrumbs`, `snippets/flash`, `snippets/form_errors`
 - `snippets/store/head` (emits `current_store.head_content.content`) and `snippets/store/body`
   (emits `current_store.body_content.render`) - the injection points for fonts, analytics, and
@@ -700,8 +698,7 @@ are load-bearing, and each one produces a broken theme rather than an error.
    browser requests that literal string. Either move the file under `assets/` or load it with
    `{% require %}` instead.
 
-Payloads are chunked at 2.5 MB per request during upload; that is a transport detail, not a size
-limit on the theme.
+The importer silently skips any file over 2.5 MB. Confirm every file arrived after an import.
 
 ## Asset and script load order
 
@@ -710,7 +707,7 @@ From the base `layouts/theme`, in emitted order:
 ```
 <head>
   csrf meta -> csp meta -> render "content_security_policy_header"
-  -> render "meta_data" -> render "organization_data" -> favicon links
+  -> render "meta_data" -> favicon links
   -> require "styles/theme.css"          (base CSS pack)
   -> {{ theme_supplement_stylesheet }}   (theme-supplement.css)
   -> store custom styles                 (global_css_url as a <link>, ELSE global_css inline)

@@ -1,6 +1,6 @@
 {
   "name": "storeconnect",
-  "version": "0.9.5",
+  "version": "0.9.6",
   "description": "Portable StoreConnect skills, specialist agents and slash commands for storefront, Salesforce, theme, and POS work.",
   "author": {
     "name": "Client Success",

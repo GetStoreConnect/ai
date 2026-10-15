@@ -1,7 +1,7 @@
 {
   "name": "storeconnect",
   "displayName": "StoreConnect Agent Skills",
-  "version": "0.9.5",
+  "version": "0.9.6",
   "description": "Portable skills and specialist agents for building, reviewing, and operating StoreConnect storefronts and point of sale (POS).",
   "author": {
     "name": "Client Success",

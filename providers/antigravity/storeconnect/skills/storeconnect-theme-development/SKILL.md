@@ -164,7 +164,8 @@ After every theme change, in this order:
 4. Check sanitized browser diagnostics for missing resources and render errors
    (see [references/assets-and-build.md](references/assets-and-build.md) →
    "Failure modes").
-5. Walk the pages the change can reach at mobile and desktop widths: home, a category, a product, cart, every checkout step, and account.
+5. Walk the pages the change can reach at phone, tablet, and desktop widths: home, a category,
+   a product, cart, every checkout step, and account. Never sign off from desktop alone.
 6. Confirm no other store changed.
 
 ## Anti-patterns

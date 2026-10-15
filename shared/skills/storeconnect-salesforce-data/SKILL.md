@@ -125,7 +125,7 @@ For deploying Apex or metadata, use `storeconnect-apex-integration`.
 |---|---|
 | `INVALID_FIELD` on write | Field API name wrong, or missing namespace/`__c`. Describe the object; do not guess. |
 | `REQUIRED_FIELD_MISSING` on create | A required lookup or picklist. `s_c__Content_Block__c` requires `s_c__Template__c`; `s_c__Page__c`/`s_c__Article__c` require `s_c__Store_Id__c`. |
-| `DUPLICATE_VALUE` on create | A composite `s_c__Unique_*` key collided - the path, identifier, or key already exists in that store or theme. |
+| `DUPLICATE_VALUE` on create | A composite `s_c__Unique_*` key collided - the path, identifier, or key already exists in that store or theme. Page Slug and Content Block Identifier are unique across the org. |
 | `DELETE_FAILED` / restricted delete | A child record still points at it. Delete the children first. |
 | Write succeeded, storefront unchanged | Allow synchronization, re-read, then use the supported operator cache-refresh procedure. Do not repeat the write or guess at an internal field. |
 | Liquid renders nothing for a custom field | No Custom Data Mapping, the mapping change has not propagated yet, or `data[...]` was used on a `{% query %}` record instead of a Drop. `data[...]` on a Drop is case-insensitive, so case is not the cause there. |

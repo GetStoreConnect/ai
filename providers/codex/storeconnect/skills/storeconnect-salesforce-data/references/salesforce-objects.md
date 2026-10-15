@@ -113,7 +113,7 @@ the target field explicitly to control it:
 | `s_c__Theme_Template__c` / `s_c__Theme_Asset__c`.`s_c__Unique_Theme_Key__c` | one key per theme |
 | `s_c__Theme_Variable__c.s_c__Unique_Theme_Variable_Key__c` | one key per theme |
 | `s_c__Theme_Locale__c.s_c__Unique_Theme_Code__c` | one locale per code per theme |
-| `s_c__Store__c.s_c__Unique_Domain_Path__c` | one store per domain + path |
+| `s_c__Store__c.s_c__Unique_Domain_Path__c` | one store per domain + path; not enforced when Path is blank |
 | `s_c__Custom_Data_Mapping__c.s_c__Unique_Custom_Data_Mapping_Key__c` | one mapping per object + field |
 
 **`s_c__sC_Id__c`** is a stable unique external ID. It can support idempotent imports

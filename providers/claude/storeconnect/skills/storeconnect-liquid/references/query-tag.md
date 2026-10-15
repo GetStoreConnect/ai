@@ -195,8 +195,11 @@ either raises or silently returns nothing.
 | Mapped custom field on a standard or StoreConnect object | `data.color__c: 'blue'` | Exact, **case-sensitive**. No wildcards. No `>` `<` operators. |
 | Mapped field on a merchant custom object | `color__c: 'blue'` — no `data.` prefix | Case-**insensitive**. `%` wildcards and arrays both work. |
 
-A Custom Data Mapping must exist for the object and for every field referenced. Without one
-the tag raises `Invalid liquid query field`.
+An unmapped **object** returns nil silently; an unmapped **field** raises
+`Invalid liquid query field`.
+
+Custom-object filters work on text, number, boolean, and date or time fields. Filtering a picklist,
+currency, or percent field raises `Invalid liquid query value`; filter on a Text copy instead.
 
 ```liquid
 {%- comment -%} Mapped fields on a managed object: exact, case-sensitive {%- endcomment -%}

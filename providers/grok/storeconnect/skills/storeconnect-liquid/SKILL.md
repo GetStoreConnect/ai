@@ -40,7 +40,8 @@ data, or silent failure when ignored.
 6. **Escape for the destination, not by habit.** Values read through a Drop or hash lookup
    are already HTML-escaped; adding `| escape` produces `&amp;lt;`. Automatic escaping is HTML
    only, so a value going into a URL still needs `| url_encode`, and into JavaScript still
-   needs `| json`.
+   needs `| json`. Escaping happens on read, so `| unescape` a value before writing it back
+   with `{% update %}`.
 7. **Never print a request parameter dump, a customer object, a cart, a payment value, or an
    authorization value into the page**, including while debugging. Use `{% debug %}`, which
    writes to the Console instead.

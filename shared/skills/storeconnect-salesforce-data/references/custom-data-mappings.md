@@ -99,7 +99,8 @@ Lookups into `data` are **case-insensitive** and a missing key returns nil rathe
 nothing at all with no error. Keep the `__c` suffix.
 
 Use the **Liquid object** name, not the Salesforce object name: a `Product2` mapping is read through
-`product`, and a mapping on `Contact` (or `Account` for Person Accounts) through `current_customer`.
+`product`, a `Contact` mapping through `current_customer`, and an `Account` mapping through
+`current_account`.
 
 Only mapped fields appear in `data`. Guard optional values before rendering, and escape output for
 its HTML, attribute, URL, JavaScript, or JSON context.
@@ -186,10 +187,8 @@ all of these hold:
 Place that in the controller template for the action that owns it - for a profile field, the profile
 update controller. The write commits immediately and syncs upstream to Salesforce.
 
-**Person Accounts.** To write a field that conceptually belongs to the Contact, map it on **Account**
-and use the `__pc` variant: `current_customer` with `favorite_color__pc`, not `favorite_color__c`.
-Salesforce stores Person Account contact fields on the Account record through `__pc` fields, so a
-write to `__c` silently misses.
+**Person Accounts.** Map and write the Contact field through `current_customer`, not the Account
+`__pc` field.
 
 Three ways a write fails silently, all invisible on the rendered page:
 
@@ -218,7 +217,7 @@ The mapping's `s_c__Data_Type__c` drives conversion in both directions.
 | `double`, `currency`, `percent` | float, or nil if unparseable | float, or null if unparseable |
 | `boolean` | boolean; nil reads as `false` | boolean |
 | `date` | date | `YYYY-MM-DD` |
-| `datetime` | time | `YYYY-MM-DDTHH:MM:SSZ`, UTC |
+| `datetime` | time, UTC | `YYYY-MM-DDTHH:MM:SSZ`, UTC |
 | `time` | `HH:MM:SS` | `HH:MM:SS` |
 | `multipicklist`, `combobox` | array, split on `;` | array joined with `;` |
 | `address`, `location` | Address / Coordinate drop from the component fields | component fields, in order |
@@ -228,8 +227,8 @@ An unparseable number or date writes as **null**, not an error. Validate in the 
 ## Verify
 
 1. Confirm the mapping saved, and that the running user can read the field in Salesforce.
-2. Wait for the mapping and existing records to become available. Do not treat immediate
-   invisibility as a failed write.
+2. Wait for the mapping and existing records to become available (mappings are cached for up to
+   five minutes). Do not treat immediate invisibility as a failed write.
 3. Test the read on a non-production store with a test record.
 4. Test any filter you rely on.
 5. If writable, exercise the real controller with a reversible value and confirm the value in
@@ -247,4 +246,5 @@ An unparseable number or date writes as **null**, not an error. Validate in the 
 | `{% update %}` does nothing | Not inside a controller `before`/`after` block; mapping is `read`; value failed to cast; check the debug console |
 | Value written but Salesforce unchanged | StoreConnect and Salesforce synchronize asynchronously; wait, re-read and never repeat a write merely because it is not visible yet. If it remains unhealthy, use the supported synchronization status and sanitized error reporting |
 | Value drifts from Salesforce | The mapped field is a formula. Map a stored field. |
-| A Person Account write has no effect | Map on `Account` and use the `__pc` field |
+| A Person Account write has no effect | Map the Contact field and use `current_customer`, not the `__pc` field |
+| Custom object filter raises `Invalid liquid query value` | Picklist, currency, and percent fields cannot be filtered. Filter on a Text copy |

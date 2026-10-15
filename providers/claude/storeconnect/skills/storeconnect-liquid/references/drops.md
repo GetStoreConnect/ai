@@ -189,7 +189,7 @@ Store configuration and settings.
 | `shipping_enabled?` | Boolean | Store has shipping enabled |
 | `pickup_enabled?` | Boolean | Click & collect enabled |
 | `accept_terms_enabled?` | Boolean | Require T&C acceptance at checkout |
-| `has_promotions?` | Boolean | Promo codes available |
+| `has_promotions?` | Boolean | Promo codes can be applied in the current price book (store-level) |
 | `has_vouchers?` | Boolean | Vouchers available |
 | `local_login?` | Boolean | Uses username/password login |
 | `sso_login?` | Boolean | Uses SSO login |

@@ -7,6 +7,7 @@ canonicals, structured data, or indexing.
 ## Contents
 
 - [Required layout outputs](#required-layout-outputs)
+- [Mobile layout](#mobile-layout)
 - [Layout items that are not breakage](#layout-items-that-are-not-breakage)
 - [What `meta_data` already emits](#what-meta_data-already-emits)
 - [Titles and descriptions are synthesized server-side](#titles-and-descriptions-are-synthesized-server-side)
@@ -40,6 +41,14 @@ Two more layout-level checks:
 - `<html lang="{{ current_store.locale }}">`. A hardcoded `lang` breaks multi-locale stores.
 - `<meta name="viewport" content="width=device-width, initial-scale=1.0">`, with **no**
   `maximum-scale` and no `user-scalable=no`. Blocking zoom is a WCAG 1.4.4 failure.
+
+## Mobile layout
+
+Check each page at phone, tablet, and desktop widths, especially product grids, cart, and checkout.
+
+- Horizontal scroll or cut-off content on a phone: Warning; Critical if it hides add-to-cart or
+  checkout.
+- Fixed-column container layouts (see `css-system.md`) holding text or cards: Warning.
 
 ## Layout items that are not breakage
 
@@ -137,11 +146,10 @@ Consequences for the audit:
 
 ## Structured data
 
-Three JSON-LD emitters ship in the base theme.
+Two JSON-LD emitters ship in the base theme. Neither emits `Organization` or `WebSite`.
 
 | Snippet | Emits | Rendered from |
 |---|---|---|
-| `organization_data` | `Organization` (name, url, logo) | the layout, once per page |
 | `breadcrumbs` | the visible `<ol>` **and** `BreadcrumbList` | page templates |
 | `products/product/rich_data_json` | `Product` or `ProductGroup` | product templates |
 
@@ -253,7 +261,6 @@ What a template can actually read. Verify every CMS-review finding against this 
 - Missing `hreflang`. There is no hreflang mechanism; multi-locale is per-store, so locale
   alternates would be hand-maintained cross-store layout work.
 - Missing Twitter/X card tags. `meta_data` emits them.
-- Missing `Organization` structured data. The layout emits it.
 - A blank `<title>`. Not reachable.
 - `itemCondition` absent from product structured data. Deliberate.
 - Tracking parameters in canonicals. Not reachable.

@@ -58,7 +58,7 @@ visitor-specific, request-specific, or otherwise unsafe to share, do not cache t
 
 | Variation axis | Review action |
 |---|---|
-| Rendered record or content entity | Include the specific record used by the fragment |
+| Rendered record or content entity | Include the specific record used by the fragment. Editing it does not refresh the fragment |
 | Loop item | Include the current item; never let all rows share one undifferentiated entry |
 | Store | Include the current store when output can differ by store |
 | Render parameters and display flags | Include every parameter that changes markup, text, classes, images, or links |
@@ -111,8 +111,25 @@ it.
 
 ## What actually invalidates a fragment
 
-Fragment freshness follows the cache block's documented expiry and declared variation inputs. A
-supported deploy refresh does not guarantee that every explicit fragment is immediately refreshed.
+A fragment refreshes when it expires (60 seconds by default; set `expires_in:` in seconds) or when
+its key changes. The key is the cache name plus `items:`, and you control both:
+
+- Editing a record listed in `items:` does not change the key. Only `current_cart` and consent
+  state do.
+- To expire fragments on demand, put a value you control in the name, such as a store variable:
+
+  ```liquid
+  {%- assign header_key = "header-" | append: store_variables['header_cache_version'] -%}
+  {%- cache header_key, items: [current_store] -%}
+    {% render "header" %}
+  {%- endcache -%}
+  ```
+
+- Editing the template does not change the key. Version the name while testing.
+- On a cache hit the block does not run, so assigns inside it are not set.
+- Caching is off in the Website Builder preview.
+
+A supported deploy refresh does not guarantee that every explicit fragment is immediately refreshed.
 
 If a recently deployed page still shows an old fragment:
 

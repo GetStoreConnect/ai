@@ -322,8 +322,13 @@ All set `display: grid` with `gap: var(--sc-grid-gap)`:
 | `sc-two-to-four-column` | 2, then 4 at medium |
 | `sc-two-to-five-column` | 2, 3 at medium, 4 at large, 5 at huge |
 
-The first four map to content-block `layout_style` values; the last two do not and cannot be
-selected on a block. See [theme-structure.md](theme-structure.md) → "The closed style vocabularies".
+The three `sc-one-to-*` classes map to content-block `layout_style` values; `sc-two-to-four-column`
+and `sc-two-to-five-column` do not and cannot be selected on a block. See
+[theme-structure.md](theme-structure.md) → "The closed style vocabularies".
+
+`two-column`, `three-column`, `four-column`, `one-third-two-thirds`, `two-thirds-one-third`, and
+`even-distribution` keep their columns at every width. Use a `one-to-N-column` value for content
+that should stack on a phone.
 
 ## Wider component-class inventory
 

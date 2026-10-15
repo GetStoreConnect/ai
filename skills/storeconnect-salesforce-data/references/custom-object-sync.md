@@ -105,7 +105,8 @@ Two flows: one for create and update, one for delete.
 | Current Record | Yes | `{!$Record}`, Entire Resource |
 | Prior Record | No | `{!$Record__Prior}`, Entire Resource. Needed for updates; blank for delete. |
 
-Outputs are `Success` (boolean) and `Error Message` (text).
+Outputs are `Success` (boolean) and `Error Message` (text). `Success` only means no exception; in a
+refreshed sandbox not yet reconnected, no change event is created.
 
 Constraints worth knowing before you build it:
 
