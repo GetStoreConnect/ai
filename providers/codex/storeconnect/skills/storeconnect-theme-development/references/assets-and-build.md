@@ -191,7 +191,7 @@ is silently absent, which looks exactly like a caching problem:
 |---|---|
 | `s_c__Active__c` | must be `true` |
 | `s_c__Global__c` | must be `true` |
-| `s_c__Channels__c` | must include `web` (also enforced by a validation rule) |
+| `s_c__Channels__c` | must include `web`, or be blank (a validation rule requires at least one channel on save, unless **Bypass Validation Rules** is on). Use `web` alone for storefront code: `web;pos` and blank also load the block on every POS register, and the package upgrade that added the field set every existing blank block to `web;pos` |
 
 Then:
 

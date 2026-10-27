@@ -322,8 +322,14 @@ Use `s_c__Path__c`. There is no slug field on this object.
 | `s_c__Position__c` | Load order |
 | `s_c__Media__c` | Media condition: `all`, `print`, `screen`. Defaults to `all` when blank. |
 
-`s_c__Channels__c` is **not required**. Leaving it blank means the block applies to every channel.
-Set it only to restrict the block to `web` or to `pos`.
+`s_c__Channels__c` is required on save: since v20.18 a validation rule rejects a record with no
+channel selected, unless **Bypass Validation Rules** is on in StoreConnect Runtime settings. The
+post-install migration that added the field (it runs on any upgrade from below v20.19) set every
+existing blank block to `web;pos`, so on an
+upgraded org storefront CSS often loads on the POS too. Set `web` for the storefront only, `pos`
+for the register only, or `web;pos` for both. A blank value also loads on every channel. When
+auditing, treat `web;pos` on a storefront-only block as a misconfiguration and change it to `web`.
+The same applies to `s_c__Script_Block__c`.
 
 ## Junction objects
 
