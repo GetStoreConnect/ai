@@ -110,6 +110,26 @@ Style only markup owned by the custom View.
   the register's supported browser.
 - Do not target, hide, or override platform DOM classes.
 - Do not use CSS visibility as a permission check.
+- Read the POS design tokens for color and type, such as
+  `var(--sc-color-surface-raised)` and `var(--sc-color-on-surface)`, so the
+  View matches the app.
+
+## Restyling the app itself
+
+To change how the whole app looks, redefine POS design tokens. Do not write
+selectors for the app's classes, IDs, elements, or markup structure. Those are
+internal and can change in any release.
+
+- Put the overrides on `:root`.
+- Load them from a Style Block (`s_c__Style_Block__c`) that is Active and
+  Global, with `pos` in Channels and `web` left out. A block with `web` also
+  loads on the storefront, and the web theme shares some names, such as
+  `--sc-color-primary`.
+- Write Content without `<style>` tags.
+- Change each color together with its paired `on-` color, for example
+  `--sc-color-primary` with `--sc-color-on-primary`.
+- Take token names only from the POS design tokens reference article. Never
+  take a class name from the rendered DOM.
 
 If a requirement needs a platform selector or structure not documented for
 customization, request a supported hook rather than shipping a fragile override.

@@ -27,7 +27,7 @@ and behavior.
 | Change initial sorting or filtering | Supported layout settings | Verify behavior and scale on the installed release. |
 | Render supported custom content | A POS view | Use only the documented context and data surface. |
 | Add a button, menu entry, or tile | A supported action configuration | Confirm the action, parameters, permissions, and offline behavior in current documentation. |
-| Add supported cross-screen styling or scripting | Script or style configuration | Keep it minimal, reversible, and within documented extension points. |
+| Add supported cross-screen styling or scripting | Script or style configuration | Keep it minimal, reversible, and within documented extension points. For app-wide color or type, redefine POS design tokens on `:root` in a POS Style Block. |
 | Produce a receipt, docket, document, or label | A supported print template | Select the documented output family before authoring and test it safely. |
 
 Choose the first supported option that meets the outcome. Avoid broad scripting
