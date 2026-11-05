@@ -87,6 +87,10 @@ A Layout Filter helps an operator narrow a supported surface. It is not an
 authorization control.
 
 - Confirm its field, type, and options against the live schema.
+- Separate multiple values in **Select Options** and **Initial Values** with
+  `;`, for example `lead:Lead;vip:VIP` and `lead;vip`. A comma does not
+  separate values: `lead,vip` is one value that matches no record, so the list
+  opens empty rather than unfiltered.
 - Keep the default broad enough that required records remain reachable.
 - Test each option and the empty state with realistic data.
 - Review all active filters on the Layout before diagnosing missing records.
@@ -114,6 +118,11 @@ reaches the register when a Layout Field, a Layout Filter, or the Layout's
 - A Sort that offers a menu of options separated by `|` sends only the first
   option's field to the register. Add the field for each later option as a
   Layout Field as well, or sorting by that option has no values to sort on.
+- When the register saves a record, StoreConnect discards any field the
+  register does not store. For a custom field to save from the register, name
+  it in a Layout Field, Layout Filter, or **Sort** for that object, and give it
+  a Custom Data Mapping with **Access Level** set to **Read/Write**. A
+  **Read** mapping displays the value but does not save changes.
 
 ## POS Views
 

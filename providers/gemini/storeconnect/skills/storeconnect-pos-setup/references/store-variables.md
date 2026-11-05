@@ -155,6 +155,9 @@ Before saving:
 - Read the existing value and record a rollback.
 - Resolve the exact key, accepted type, and behavior from current StoreConnect
   documentation or a supported administrative surface.
+- Write an on/off value as lowercase `true` or `false`. The register reads some
+  on/off settings regardless of case and others only as an exact `true`, so a
+  value such as `True` or `TRUE` can leave a setting off.
 - Confirm the setting is not owned by a Layout, provider, or another
   administrative record.
 - Check that the value contains no secret or unnecessary customer information.

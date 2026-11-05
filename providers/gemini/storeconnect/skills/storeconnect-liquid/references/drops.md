@@ -381,12 +381,12 @@ Product brand/manufacturer.
 
 | Property | Type | Description |
 |---|---|---|
-| `id` | String | Brand ID |
+| `id` | String | The brand's StoreConnect external ID, not the Salesforce Id |
 | `name` | String | Brand name |
 | `logo` | ImageDrop | Brand logo |
 | `data` | Hash | Custom data fields |
 
-> There is no `path` on BrandDrop — link to brand listings via a filtered search/category URL instead.
+> There is no `path` on BrandDrop — link to brand listings via a filtered search/category URL instead. The brand filter matches the brand's Salesforce Id, so `brand.id` in that URL matches nothing. Take the value from `current_search.fields.filters.brands.options`, where each `option.value` is the brand's Salesforce Id.
 
 ---
 

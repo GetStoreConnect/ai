@@ -157,6 +157,10 @@ A new path is also rejected if it collides with an existing Route Mapping.
 
 `s_c__Theme__c` (picklist) is **deprecated** - use `s_c__Theme_Id__c`.
 
+`s_c__Currency__c` is a restricted picklist that ships with a short list of currencies and defaults
+to AUD. Describe the field for the allowed values before setting it; a code it does not list fails
+the write. On a multi-currency org the store uses the record's `CurrencyIsoCode` instead.
+
 Do not change Store wiring without resolving and showing both sides of every relationship. A
 mis-set `s_c__Theme_Id__c` or `s_c__Home_Page_Id__c` changes the whole site immediately.
 
@@ -209,7 +213,10 @@ categories across several stores. Before editing one, query every junction that 
 
 **A custom block template needs both fields.** Set `s_c__Template__c` to `custom` and
 `s_c__Custom_Template__c` to the theme snippet key; the storefront renders `blocks/<key>`. Setting
-only one of the two renders nothing.
+only one of the two renders nothing. A store on the previous release ignores
+`s_c__Custom_Template__c`, even where the picklist offers `custom`: there, add the snippet key itself
+as a `s_c__Template__c` picklist value and select it. See `storeconnect-platform` for how to tell
+which release a store runs.
 
 Other restricted picklists on this object:
 

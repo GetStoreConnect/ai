@@ -146,6 +146,13 @@ resources/
 Deploy the whole set as one unit and update the manifest only once its files are present, or the
 HTML points at filenames that do not exist yet. Deploy rules: `storeconnect-sync-deploy`.
 
+**A changed file needs a new filename.** Resources under `/assets/` are served with a public
+cache-forever header, so browsers and shared caches keep a file for as long as the filename stays
+the same. Rebuild so the fingerprint changes and deploy the new manifest. Rewriting the content of
+an existing filename leaves returning visitors on the old copy. A missing file's 404 is cached only
+briefly. This rule covers resources only: a Theme Asset loaded with `asset_url` is served from the
+asset CDN at the URL on the record, not through `/assets/`.
+
 ## Oversized resources
 
 A Theme Template's content field is capped at **131,072 characters**. A resource larger than that is
@@ -198,17 +205,27 @@ Then:
 | Field | Behavior |
 |---|---|
 | `s_c__Url__c` | If set, emitted as a `<link>` / `<script src>`. **Takes precedence over `Content__c`**, which is then ignored |
-| `s_c__Content__c` | Long Text Area, 131,072-character cap. Emitted inline. Split large CSS by topic across several blocks |
+| `s_c__Content__c` | Long Text Area, 131,072-character cap. Emitted inline inside the `<style>` or `<script>` element that `snippets/styles` or `snippets/scripts` outputs, so enter bare CSS or JavaScript. A `<style>` or `<script>` tag in the content breaks the block. Split large CSS by topic across several blocks |
 | `s_c__Position__c` | Load order, ascending, nulls last. Put token and variable definitions first so later blocks can resolve `var()` |
 | `s_c__Media__c` | Style Blocks only. Emitted as the `media` attribute; defaults to `all` |
 
 Both are rendered by `snippets/styles` and `snippets/scripts`. A replacement layout that omits
 `{% render "styles" %}` / `{% render "scripts" %}` silently disables every block on the store.
 
-**Prefer a Script Block for a consent-gated script.** When the store's privacy settings are in use,
-the storefront renders only those Script Blocks that are either unattached to a cookie or attached
-to a cookie the visitor has enabled. A `<script>` pasted into a template or content block bypasses
-that entirely and fires regardless of consent.
+**Prefer a Script Block for a consent-gated script.** A `<script>` pasted into a template or
+content block bypasses consent entirely and fires regardless of the visitor's choices. To gate a
+Script Block, point one or more Cookie records at it. With privacy compliance enabled on the Store,
+these rules decide whether the block loads:
+
+- A block that no Cookie points at always loads.
+- Only active Cookies in active Compliance Groups count. A Cookie in a required group is always
+  enabled; any other Cookie stays disabled until the visitor enables it.
+- A block loads when at least one counted Cookie is enabled and none is disabled. A block linked
+  to two Cookies loads only when the visitor enables both.
+- A block whose Cookies are all inactive, or all in inactive groups, never loads, and nothing
+  reports it.
+
+With privacy compliance off, every active, global, web block loads and Cookies are ignored.
 
 Deployment guidance and orphan cleanup: `storeconnect-sync-deploy`.
 

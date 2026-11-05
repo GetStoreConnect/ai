@@ -75,6 +75,23 @@ session. Use the new key in new work:
 Translation keys have the same treatment: `line_items.links.edit_bundle`,
 `line_items.links.remove_item` and `line_items.quantity` route to their `cart_items.*` equivalents.
 
+### Moved keys that are not re-routed
+
+Two older cart snippets became components, with no re-routing and no warning:
+
+| Old key | Current key | Rendered by |
+|---|---|---|
+| `snippets/header/dropdown/cart` | `components/cart-menu` | `snippets/header`, as `{% component "cart-menu", reload: "sc.cart-updated sc.voucher-applied sc.voucher-removed" %}` |
+| `snippets/cart/cart` | `components/cart` | `pages/cart`, as `{% component "cart", reload: "sc.cart-updated" %}` |
+
+An override on an old key is never read unless the store also overrides the template that renders
+it. The store shows the base component instead, so the customization disappears with no error. Move
+the change to the component key and keep the `{% component %}` call that reloads it.
+
+Base templates change between releases in the same way. After a platform upgrade, diff every
+overridden key against the current base theme, and make the changes on a cloned theme you preview
+before activation, never on the live one.
+
 ## Theme records in Salesforce
 
 | Object | Purpose | Identifying field | Content field |
@@ -254,7 +271,10 @@ the site silently:
 - `<html lang="{{ current_store.locale }}">` and `<meta name="viewport" content="width=device-width, initial-scale=1.0">`
 - `{% render "content_security_policy_header" %}`
 - `{% render "meta_data", title: title, meta_keywords: meta_keywords, meta_description: meta_description %}` - all SEO and social markup
-- Favicon links from `current_store.favicon` (`.pico_url` at 16x16, `.icon_url` at 32x32)
+- Favicon links from `current_store.favicon` (`.pico_url` at 16x16, `.icon_url` at 32x32). This
+  value and the base output exist on the current release only. On the previous release the base
+  layout outputs no favicon, so a store that wants one links a Theme Asset in a `layouts/theme`
+  override, for example `<link rel="icon" href="{{ 'images/favicon.png' | asset_url }}">` where `images/favicon.png` is the asset key.
 - `{% render "styles" %}` and `{% render "scripts" %}` - the Style Block and Script Block renderers. Omit them and every Style Block on the store stops applying
 - `{% render "store/head" %}` - the store's Head content block
 
@@ -461,8 +481,9 @@ Use the currently documented theme and content workflow:
 5. Preview the block with empty, populated, nested, and long content before
    publication.
 
-Do not add managed picklist values, reproduce normalization rules, write raw
-record fields from an old example, or construct the content operation yourself.
+Do not reproduce normalization rules, write raw record fields from an old example, or construct
+the content operation yourself. On the current release, do not add managed picklist values either;
+on the previous release a picklist value is the only route.
 If the current supported tool or live schema does not expose the needed custom
 template selection, stop and hand off.
 
@@ -483,6 +504,12 @@ Verified `content_block` accessors:
 | `sub_type`, `layout_style`, `alignment` | style variants, see below |
 | `data` | custom-data map for fields exposed via a Custom Data Mapping |
 | `render` | renders this block through its own template |
+
+**Block output passes through Markdown.** The platform converts the rendered output of a block
+template from Markdown to HTML. Wrap the whole output in one block-level element (`<section>`,
+`<div>`) that starts at the beginning of a line. Top-level text or a top-level inline element
+(`<a>`, `<span>`, `<img>`) is wrapped in `<p>`, and Markdown syntax outside an HTML element is
+converted. The store's Head content block is the exception and is output as is.
 
 Guard every optional field with `!= blank`. Render a specific block from anywhere with
 `{{ all_content_blocks['hero-banner'].render }}` (the key is the block's identifier).
@@ -592,9 +619,11 @@ variable for a per-store value the theme reads through `store_variables` (`captc
 ## Translations
 
 Translations are records, not a file in the theme: `s_c__Theme_Locale__c` (one per language, with
-`Code__c`, `Active__c`, `Default__c`) parenting `s_c__Locale_Translation__c` key/value rows. At
-render time the active locale's rows are loaded over the platform's own base translations, so you
-only supply the strings you are changing.
+`Code__c`, `Active__c`, `Default__c`) parenting `s_c__Locale_Translation__c` key/value rows. The
+Store's locale sets the storefront language. At render time the rows of the Theme Locale whose code
+matches the Store's locale are loaded over the platform's own base translations, so you only supply
+the strings you are changing. The Theme Locale's `Default__c` flag does not choose the language: to
+change the language, change the Store's locale.
 
 Read a translation with `{{ "key.name" | t }}`. An unknown key renders
 `missing translation: ... for locale: ...` into the page, so a typo is visible rather than blank.
@@ -699,6 +728,11 @@ are load-bearing, and each one produces a broken theme rather than an error.
    `{% require %}` instead.
 
 The importer silently skips any file over 2.5 MB. Confirm every file arrived after an import.
+
+**Import does not activate the theme.** The importer creates a new Theme record and the records under it
+only. It assigns the theme to no Store, so the storefront keeps rendering the Store's current theme
+and looks unchanged. Preview the imported theme, then assign it to the Store through the supported
+activation workflow.
 
 ## Asset and script load order
 

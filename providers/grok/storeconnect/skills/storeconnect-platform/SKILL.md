@@ -51,6 +51,27 @@ values before copying configuration into public examples or repositories. Keep c
 tokens, PINs, signing secrets, payment details, customer data, and production record exports out
 of repository files and project instructions.
 
+## These skills describe the current release
+
+Every StoreConnect skill describes the current release. Stores upgrade on their own schedule, so the
+store in front of you can still run the previous release, where some described features are absent.
+Nothing is broken when that happens; the store has not been upgraded yet. Recognize it from what the
+store serves, not from a version number:
+
+- **Agent connection.** A store on the previous release serves no `/.well-known/mcp.json` card, so
+  that address returns a not-found page. This is the clearest signal. See
+  [references/mcp-connection.md](references/mcp-connection.md).
+- **Favicon.** On the current release the base layout outputs the Store's favicon. On the previous
+  release neither the base layout nor the store object exposes it, so a favicon set on the Store
+  shows no icon in the browser tab. The theme supplies one instead, with a `<link rel="icon">` to a
+  theme asset in a layout override.
+
+Custom content-block templates also register differently on the previous release. Decide the route
+from the release, not from the picklist values the org shows; see `storeconnect-theme-development`.
+
+When a skill describes a feature the store does not show, confirm it in the org before relying on
+it, and tell the operator the store may be on the previous release rather than working around it.
+
 ## Connect StoreConnect tools when needed
 
 Installing these skills does **not** connect a store and must never trigger a connection. The
@@ -119,6 +140,12 @@ StoreConnect and Salesforce synchronize asynchronously; wait, re-read and never 
   immediately.
 - "Not there yet" is not failure. Allow the supported synchronization to
   complete and re-check before reporting a problem.
+- Some storefront data refreshes on a schedule, and a cache refresh does not
+  speed it up. Category listings, search results, trait filters, and listing
+  prices can take up to a few hours to reflect a product or category edit;
+  page and article search text can take up to a day; variant option data can
+  stay cached for up to an hour. Tell the operator when to expect the change
+  rather than promising it immediately.
 - **Never repeat a write to force it through.** That creates duplicate records.
 - Verify the actual result: re-read the record and load the affected storefront page. Do not report completion from a successful tool response alone.
 

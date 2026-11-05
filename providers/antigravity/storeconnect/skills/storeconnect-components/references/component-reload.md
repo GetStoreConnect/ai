@@ -9,6 +9,7 @@ rules that must not be broken.
 - [What a reload re-renders](#what-a-reload-re-renders)
 - [Carrying state across a reload](#carrying-state-across-a-reload)
 - [lazy and defer](#lazy-and-defer)
+  - [Components on the home page](#components-on-the-home-page)
 - [Triggering a reload](#triggering-a-reload)
 - [The shipped event names](#the-shipped-event-names)
 - [Remote forms: the loop with no JavaScript](#remote-forms-the-loop-with-no-javascript)
@@ -39,6 +40,7 @@ Arguments may span lines, as production themes do for long option lists:
 | `reload:` | Space-separated DOM event names. When one reaches `document`, the server re-renders this component and the container is replaced |
 | `lazy: true` | Nothing is rendered on the initial page. Requires `reload:` — without it the component can never load |
 | `defer: true` | Renders a placeholder and loads itself as soon as the page registers it. Combine with `reload:` for a region that is both slow and live |
+| `dynamic: true` | Loads after the page arrives, as `defer` does, on a token that any visitor can use. Required on the home page for any component with `reload:`, `lazy`, or `defer`. With `lazy: true` the component stays empty until a reload event |
 | anything else | Passed to the template as a parameter for the **initial render only** |
 
 Inside the component template:
@@ -137,6 +139,28 @@ its `reload:` list refresh it.
 
 Deferred content is not in the server-rendered HTML, so never `defer:` or `lazy:` a region that
 carries the page's primary content, headings, prices, or links you need indexed.
+
+### Components on the home page
+
+The home page is cached as one whole page, and anonymous visitors without a cart all receive the
+same copy. A `reload:`, `lazy`, or `defer` component carries a token tied to the session of the
+visitor whose request rendered that copy. For every other visitor, the component request returns a
+404, so the region never loads or never updates.
+
+Add `dynamic: true` to every such component on the home page:
+
+```liquid
+{% component "example/featured-products", dynamic: true, reload: "sc.cart-updated" %}
+```
+
+The token of a dynamic component carries no session. In exchange, `dynamic: true` gives up three things:
+
+- Server-rendered content. The component always loads after the page arrives, so it is not in the HTML crawlers see.
+- Tag parameters. None reach the template, so resolve everything from global Drops such as `current_cart` and `current_store`.
+- `{% context %}` state. The platform drops it and writes a Console warning, because the token is shared between visitors.
+
+Test the home page from a second clean browser session. The 404 never appears for the visitor whose
+request filled the cache.
 
 ## Triggering a reload
 
@@ -344,7 +368,7 @@ change the surrounding page.
 - **List events, do not chain them.** `reload: "a b c"` on each component costs one round trip. Listening for `a` in order to dispatch `b` to reload a second component costs two, in series.
 - **Keep the payload small.** The response is the component's entire rendered HTML. A component that exists to update a total should not contain the line-item list.
 - **Cache inside, never outside.** `{% cache %}` around the component is forbidden; `{% cache %}` around an expensive fragment *inside* the component template is the right optimization. Include every varying entity in `items:` and never cache customer-specific or price-specific output. See `storeconnect-debug-performance`.
-- **`defer: true`** keeps a slow region off the first paint. **`lazy: true`** avoids rendering content nobody opened.
+- **`defer: true`** keeps a slow region off the first paint. **`lazy: true`** avoids rendering content nobody opened. On the home page, add `dynamic: true` to either one.
 - **Debounce at the source.** 200–300 ms on text input; dispatch once after the interaction settles rather than once per keystroke.
 - **Paginate inside a component** exactly as you would on a page. A reload does not make an unbounded collection cheap.
 
@@ -356,6 +380,7 @@ change the surrounding page.
 | One shopper sees another's cart, price, or account content | Customer-specific output was cached | Remove that output from the cached region. This is a data leak, not staleness |
 | A form shows a value or validation error the visitor never submitted, or a submission fails unexpectedly | A fragment containing a `{% form %}` was cached | Move the complete form outside the cached fragment — see [Forms inside a cached fragment](#forms-inside-a-cached-fragment) |
 | Nothing renders and nothing ever loads | `lazy: true` with no `reload:` | Add `reload:` and dispatch the event, or use `defer: true` |
+| A home page component works for you but returns 404 for other visitors | The cached home page carries a component token tied to your session | Add `dynamic: true`. See [Components on the home page](#components-on-the-home-page) |
 | Works on first paint, dead after the first update | Inline `<script>` inside the component, or a `{% require %}` that only appears there | Load the asset from the layout or page and re-initialize on DOM change, or delegate from an ancestor |
 | Reloads but shows blanks, zeros, or defaults | Tag parameters are not passed on a reload | Persist identifiers with `{% context %}` and re-resolve, guarding the empty case |
 | `{% context %}` raises a Liquid syntax error | Used outside a component template | Only use it in `components/*.liquid` |

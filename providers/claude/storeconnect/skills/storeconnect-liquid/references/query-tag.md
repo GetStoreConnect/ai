@@ -113,6 +113,7 @@ Condition keys are the **lowercase query field names**, and the check is
 - Standard columns: `name`, `sfid`, `firstname`, `lastname`, `createddate`, `isactive`.
 - StoreConnect managed columns: `s_c__slug__c`, `s_c__store__c`, `s_c__published__c`.
 - `sfid` is the Salesforce record ID. `s_c__sc_id__c` is the StoreConnect external ID.
+- An `sfid` condition matches the whole Id, with no conversion between the 15- and 18-character forms. Pass the 18-character Id; a 15-character Id, such as one copied from a report, matches nothing.
 - Mapped custom fields on a standard or managed object need the `data.` prefix — see below.
 
 ## Conditions by field type

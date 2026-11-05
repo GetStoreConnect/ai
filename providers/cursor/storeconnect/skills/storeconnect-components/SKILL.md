@@ -50,6 +50,7 @@ step to a static render, and do not reimplement the payment request yourself.
 - The template is `components/<name>.liquid` in the theme. Nested names work: `"checkout/vouchers"` → `components/checkout/vouchers.liquid`.
 - `reload:` is a space-separated list of DOM event names. Any other option is passed to the template as a parameter.
 - `lazy: true` renders nothing until a reload event fires. `defer: true` renders a placeholder and loads itself immediately, off the critical path.
+- On the home page, add `dynamic: true` to any component with `reload:`, `lazy`, or `defer`. The home page is cached whole, and without `dynamic: true` the component returns a 404 for every visitor except the one who rendered the cached copy. A dynamic component loads after the page arrives and receives no tag parameters or `{% context %}` state.
 - Inside the component, `reloaded` is `true` on a reload render, and `context.<key>` reads state persisted with `{% context %}`.
 
 Dispatch a reload on `document` after the state change has succeeded:
@@ -116,6 +117,7 @@ after the mutation succeeded; handle the failure branch with a message, not a si
 |---|---|
 | Renders correctly but never updates; console shows a reload error | The component container was cached |
 | Nothing renders and nothing ever loads | `lazy: true` with no `reload:` — it is dead markup |
+| A home page component works for you but returns 404 for other visitors | The component has no `dynamic: true` |
 | Works on first paint, dead after an update | Inline `<script>` or `{% require %}` inside the component |
 | Reloads but shows blanks or defaults | Tag parameters are not preserved across a reload; persist IDs with `{% context %}` |
 | Reload event fires, nothing happens | Dispatched on an element without `bubbles: true`, or the name does not match the `reload:` list exactly |
@@ -130,7 +132,7 @@ Full table with fixes: `references/component-reload.md`.
 - List every relevant event on one component's `reload:` rather than chaining event A to event B to reload a second component — chains serialize round trips.
 - The reload payload is the component's whole rendered HTML. Keep components narrow; do not put a 50-row list in a component that exists to update one total.
 - Debounce at the source for text input (200–300 ms) and show a loading state immediately, before the request.
-- `defer: true` for slow or below-the-fold regions; `lazy: true` for content only revealed on demand.
+- `defer: true` for slow or below-the-fold regions; `lazy: true` for content only revealed on demand. On the home page, add `dynamic: true` to both.
 - Cache only stable, read-only fragments *inside* the component template with `{% cache %}` and include every documented variation axis. Never cache the container, a form, payment content, or customer-specific output.
 
 ## Verify after any change

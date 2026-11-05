@@ -63,6 +63,9 @@ platform context.
    list is StoreConnect's own configuration rather than anything a store
    administrator can change. Report the refusal, the address shown with it, and
    this product's name to the user.
+6. If sign-in is refused with `This user has no editing access to this store.`,
+   stop. The user holds no Content Changes store role for this store. Report it;
+   a StoreConnect administrator assigns the role, then the user signs in again.
 
 ## Verify before trusting the connection
 
@@ -83,8 +86,12 @@ platform context.
   them from public examples, logs, issues, and shared instructions.
 - Never commit or repeat credentials or manually constructed authorization
   values.
-- On an authentication error, rerun the product's native sign-in action rather
-  than switching credential mechanisms.
+- On an authentication error (`401`), rerun the product's native sign-in action
+  rather than switching credential mechanisms. A `403` means the user holds no
+  editing role for this store; signing in again does not help until an
+  administrator assigns one.
 - If sign-in succeeds but a needed operation is unavailable, report the gap and
-  ask the StoreConnect administrator for access. Do not work around the
+  ask the StoreConnect administrator for access. Tool permissions come from the
+  role's API Scopes, read at sign-in, so after the administrator changes them
+  the user signs in again. Do not work around the
   boundary with another endpoint, another credential, or a direct data write.

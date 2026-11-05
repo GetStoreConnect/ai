@@ -90,6 +90,10 @@ configuration, so a store administrator cannot add to it: report the refusal and
 to the operator, and do not retry, substitute another address, or fall back to a credential the
 operator did not supply.
 
+Sign-in also refuses a user who holds no Content Changes store role, at editor or approver level,
+for this store, with `This user has no editing access to this store.` Report it to the operator: a
+StoreConnect administrator assigns that role, and then the operator signs in again.
+
 Do not request, repeat, copy, or store credentials in chat, URLs, commands, screenshots,
 repository files, project instructions, or example configuration. Do not invent header formats or
 token schemes. Resolved store domains and identifiers may be kept only in the access-restricted
@@ -101,6 +105,8 @@ StoreConnect and client documentation.
 
 - After connecting, read the live tool list and each tool's current schema. That is the only authoritative statement of what this connection can do.
 - The visible surface is filtered by what the connected credential is permitted to do. A shorter list than expected means narrower permissions, not a broken or older store.
+- The permissions come from the **API Scopes** on the user's store roles, read once at sign-in and fixed for that session. A connection with no tools, or without a tool the operator expects, means the role had no matching scopes at sign-in. The fix is for an administrator to set the scopes, then for the operator to sign in again; reconnecting without a new sign-in keeps the old permissions.
+- A `401` response means the credential is missing, invalid, or expired: sign in again. A `403` response means the credential is valid but the user holds no editing role for this store. Signing in again does not help until an administrator assigns the role.
 - Never infer a capability from another StoreConnect store, from an earlier session, or from a static example. Never assemble a call from a remembered tool name.
 
 ## Verify before writing

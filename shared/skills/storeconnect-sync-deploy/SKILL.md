@@ -1,6 +1,6 @@
 ---
 name: storeconnect-sync-deploy
-description: Safely deploy changes to a StoreConnect store with connected StoreConnect tools, storeconnect-cli, or an explicitly approved Salesforce workflow. Covers target confirmation, rollback baselines, validation, preview, human approval, supported cache refresh, verification, and cleanup. Load before pushing or publishing any theme file, CSS, content block, translation, or store configuration, and before taking a store live.
+description: Safely deploy changes to a StoreConnect store with connected StoreConnect tools, storeconnect-cli, or an explicitly approved Salesforce workflow. Covers target confirmation, rollback baselines, validation, preview, human approval, supported cache refresh, verification, and cleanup. Load before pushing or publishing any theme file, CSS, content block, translation, or store configuration, before taking a store live, and before working in a refreshed sandbox.
 ---
 
 # StoreConnect sync and deploy
@@ -78,6 +78,18 @@ change before you start. "It is faster" is not a reason.
 | Pushing theme files through `sc`, or driving the staged draft → preview → publish pipeline directly. Also read this before your **first** publish on any store: "publish" does not mean live, and knowing that changes what you tell the operator | [references/cli-and-staged-pipeline.md](references/cli-and-staged-pipeline.md) |
 | Considering a direct Salesforce theme write because the staged workflows do not cover the change — approval boundary, rollback, live-schema planning, safe apply/delete behavior, supported cache refresh, and partial-failure handling | [references/theme-pull-push.md](references/theme-pull-push.md) |
 | A domain cutover, or the first production publish of a new or replaced storefront. Work through it **before** the publish so the redirect and metadata gaps are known in advance, then confirm each item after | [references/go-live-marketing-checklist.md](references/go-live-marketing-checklist.md) |
+
+## After a sandbox refresh
+
+A refreshed sandbox is a copy of production, including the Store records and
+StoreConnect's connection setup. Sync from that sandbox stops, with no error,
+until the sandbox is connected to its own store.
+
+1. Before any domain, store, or sync work in a refreshed sandbox, ask the
+   operator to run **Get sandbox** in the StoreConnect Console and complete the
+   setup it starts. Do not write to the sandbox until they confirm it finished.
+2. Do not edit or delete StoreConnect's connection setup records yourself. If
+   sync still looks wrong after setup, re-run setup rather than repairing records.
 
 ## The deploy sequence
 

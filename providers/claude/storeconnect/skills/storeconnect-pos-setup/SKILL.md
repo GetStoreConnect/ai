@@ -93,10 +93,10 @@ flows may impose additional steps in the installed release.
    old object map.
 
 4. **Establish the register.** Create or select an active register for the
-   outlet through the supported workflow. Confirm it is available to the
-   intended device. Do not manually edit platform-maintained connection state;
-   use the supported disconnect or administrative reset flow when reassignment
-   is required.
+   outlet through the supported workflow. A device offers only that outlet's
+   registers that are **Active** and not **Connected**. Do not manually edit
+   platform-maintained connection state; use the supported disconnect or
+   administrative reset flow when reassignment is required.
 
 5. **Configure staff access.** Create the supported role or capability profile,
    grant the staff member access to the intended outlet, and have a Salesforce

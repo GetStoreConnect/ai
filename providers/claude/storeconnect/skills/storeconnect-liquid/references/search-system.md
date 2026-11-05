@@ -159,6 +159,9 @@ Multi-select field — `contains` is correct here:
 {% endif %}
 ```
 
+A brand option's `value` is the brand's Salesforce Id. `brand.id` on a product is the StoreConnect
+external ID and does not match it, so never build a brand filter value from `brand.id`.
+
 Single-value field — use `==`, never `contains`:
 
 ```liquid

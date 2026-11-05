@@ -9,11 +9,38 @@ Complements the product go-live guidance at
 [preparing to launch your store](https://support.storeconnect.com/article/preparing-to-launch-your-store);
 this file covers the parts that are only checkable against the live domain.
 
+## Contents
+
+- [Before you begin](#before-you-begin)
+- [Which store the domain serves](#which-store-the-domain-serves)
+- [Indexability](#indexability--the-two-switches-that-silently-block-a-launch)
+- [Redirects from a replaced site](#redirects-from-a-replaced-site)
+- [SEO metadata](#seo-metadata)
+- [Structured data](#structured-data)
+- [Analytics](#analytics)
+- [Verification](#verification)
+
 ## Before you begin
 
 Confirm the production domain resolves and that the theme intended for launch is
 the one currently live on the Store, per this skill's own
 [verification step](../SKILL.md#verification).
+
+## Which store the domain serves
+
+Set the Store's domain (`s_c__Domain__c`) before the DNS switch, so the first
+request on the new domain resolves to the intended store. Then check which store
+answers at the domain root:
+
+- A store with a blank **Path** (`s_c__Path__c`) serves the domain root,
+  whether or not it is the **Default** store.
+- When several stores share the domain, the root goes to the one store with no
+  Path. If more than one has no Path, the **Default** store among them answers,
+  and with no Default the root fails to resolve. If every store has a Path, the
+  **Default** store answers at the root.
+- Single sign-on callbacks run outside any store address. They return to the
+  store set on the authentication provider, and fall back to the **Default**
+  store only when the provider has no store set.
 
 ## Indexability — the two switches that silently block a launch
 

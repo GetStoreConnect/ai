@@ -77,10 +77,11 @@ correct scope before configuring registers, staff, or stock.
 A register is an assignable trading position for one intended outlet. Resolve
 the current register object and supported status values from the live schema.
 
-Create or change it only through the supported administrative workflow. Confirm
-that it is active, belongs to the intended outlet, and is available to the
-intended device. Connection or assignment state maintained by StoreConnect must
-not be edited directly to force a register into the picker.
+Create or change it only through the supported administrative workflow. A
+device offers a register only when it belongs to the outlet the device signs
+in to, is **Active**, and is not **Connected**. Connection or assignment state
+maintained by StoreConnect must not be edited directly to force a register
+into the picker.
 
 For a stuck or replaced device, use the supported disconnect or administrative
 reset flow with approval after confirming no one is trading and no
@@ -158,7 +159,10 @@ current documentation and live records for the exact fields and accepted values.
    verify the product is in scope before resetting anything.
 5. **Effective price.** Confirm an active price exists in the pricing context
    that applies to this sale. See [pricebook resolution](#pricebook-resolution).
-6. **Availability.** Confirm the product is active and currently available.
+6. **Availability.** The register does not check the product's **Active**
+   checkbox or **Available On** date, so deactivating a product does not stop
+   a sale at POS. To stop selling a product at the register, remove the
+   product's price book entries; add to cart then fails for lack of a price.
 7. **Inventory.** If inventory is tracked, confirm sellable stock through an
    active outlet inventory source and the intended fulfillment outcome.
 8. **Lookup method.** If barcode or another identifier is used, verify it is

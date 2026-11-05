@@ -31,7 +31,7 @@ Open only what the task in front of you needs.
 |---|---|---|
 | Overriding an existing base-theme template, or unsure a key exists | [references/theme-structure.md](references/theme-structure.md) → "Template key conventions" | Confirm the exact key first. A wrong key is a silent no-op, and the leaf filenames repeat (three different `menu.liquid`, three `results.liquid`) |
 | Writing or changing any CSS | [references/css-system.md](references/css-system.md) → "Color variables" and "Component class naming" | Get the real token and class names before you write a selector. Fabricated names are the single most common failure |
-| Authoring a custom content-block template | [references/theme-structure.md](references/theme-structure.md) → "Content block templates" | The Salesforce picklist is restricted; the custom path uses a sentinel value, not a new picklist entry |
+| Authoring a custom content-block template | [references/theme-structure.md](references/theme-structure.md) → "Content block templates" | The Salesforce picklist is restricted. On the current release the custom path uses a sentinel value, not a new picklist entry; on the previous release a picklist value is the only route |
 | Shipping a compiled bundle, adding a page-specific pack, or a file over ~128 KB | [references/assets-and-build.md](references/assets-and-build.md) | Two separate asset subsystems, a hard per-record character cap, and a chunking mechanism for oversized files |
 | Diagnosing a 404 / `unknown asset:` / `Resource not found` on the storefront | [references/assets-and-build.md](references/assets-and-build.md) → "Failure modes" | Each message maps to one specific misconfiguration |
 | Importing a theme zip, or building a theme locally | [references/theme-structure.md](references/theme-structure.md) → "Theme zip import" | The importer silently skips whole directories and truncates oversized files |
@@ -174,7 +174,7 @@ After every theme change, in this order:
 - Lowercasing a component class (`.sc-header`) or PascalCasing a utility (`SC-Flex`).
 - Naming your own tokens `--sc-*`. They read as real theme tokens, get flagged as unknown, and will collide with a future base token.
 - Setting a Store Variable and expecting a Theme Variable to change. They are separate namespaces read through separate globals; neither overrides the other.
-- Adding a picklist value to register a custom block instead of using the `custom` sentinel.
+- On the current release, adding a picklist value to register a custom block instead of using the `custom` sentinel. On a store still on the previous release, the picklist value is the only route.
 - Copying or retaining a cache block without reviewing its content and every variation axis.
 - `{% render %}` for anything that must react to cart or voucher changes. Use `{% component %}` with a `reload:` event list.
 - Hardcoded colors and spacing in selectors instead of `var(--sc-*)`.

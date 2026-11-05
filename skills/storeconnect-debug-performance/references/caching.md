@@ -51,6 +51,12 @@ Do not treat an existing theme cache block as permission. Move forms, components
 and customer-specific output outside the block even when the surrounding theme uses a broader
 cache.
 
+The platform caches the home page as one whole page, and anonymous visitors without a cart share
+one copy. Output that varies by query parameters, flash messages, or other session state is frozen
+into that shared copy, so keep it off the home page. A `reload:`, `lazy`, or `defer` component
+without `dynamic: true` returns a 404 for every visitor except the one whose request filled the
+cache. See `storeconnect-components`, `references/component-reload.md`.
+
 ## Review every variation axis
 
 For a stable public fragment, list every input that can change its rendered output. If an axis is

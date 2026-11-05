@@ -41,6 +41,7 @@ ahead of the render.
 | Persist an extra value onto a record the platform already models | `{% update %}` in that route's controller, plus a read-write Custom Data Mapping | `storeconnect-controllers`, `storeconnect-salesforce-data` |
 | A shopper action must cause arbitrary DML in Salesforce | Custom form → `s_c__Form_Answer__c` → record-triggered Flow → invocable Apex | Pattern B |
 | Automation after any StoreConnect record changes in Salesforce | Record-triggered Flow first; invocable Apex or a bulk-safe trigger only if Flow cannot express it | Pattern C, plus platform rules |
+| Automation when a storefront or POS order completes | Record-triggered Flow on `Order` keyed off the final **Checkout Step** value, never **Status** or insert | `storeconnect-salesforce-data` → commerce-objects.md, Orders |
 | Structure too expensive or impossible to build per render | Customer-owned Salesforce automation generates a bounded result, followed by the current supported storefront refresh workflow | Pattern C |
 | Call an approved external service from Salesforce | Named Credential callout in Apex | Platform rules, callouts |
 

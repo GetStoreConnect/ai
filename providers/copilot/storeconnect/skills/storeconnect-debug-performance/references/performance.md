@@ -35,7 +35,7 @@ only distinguishable by measurement, and the wrong fix makes the page slower.
 | `{% for … limit: N %}` | Limits rendering, not fetching | On a paginated collection it renders nothing at all. |
 | `{% render %}` | A nested template render. Parsing is reused within a request, so a snippet rendered 50 times is parsed once, but the parse recurs on every request | The unit to cache, because a cache hit skips the whole nested render. |
 | `{% cache %}` hit | Skips the entire body | Nothing inside runs. See [caching.md](caching.md). |
-| `{% component %}` | A full nested render, plus a token per render | Never cacheable. Use `defer:`/`lazy:` instead. |
+| `{% component %}` | A full nested render, plus a token per render | Never cacheable. Use `defer:`/`lazy:` instead, and on the home page add `dynamic: true`, or other visitors get a 404 on the component. |
 | `{% include %}` | **Unusable.** Prints `Liquid error: This liquid context does not allow includes.` into the page | Always `{% render %}`. |
 
 ## Collections: size, any, and pagination
