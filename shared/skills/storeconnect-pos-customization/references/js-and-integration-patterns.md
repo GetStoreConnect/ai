@@ -17,6 +17,7 @@ behavior.
 - [Writing data](#writing-data)
 - [Escaping and untrusted input](#escaping-and-untrusted-input)
 - [CSS patterns that hold up in the POS](#css-patterns-that-hold-up-in-the-pos)
+- [Restyling the app itself](#restyling-the-app-itself)
 - [External integrations](#external-integrations)
 - [Client-side checks are not authorization](#client-side-checks-are-not-authorization)
 - [Do not touch platform-managed state](#do-not-touch-platform-managed-state)
@@ -116,20 +117,78 @@ Style only markup owned by the custom View.
 
 ## Restyling the app itself
 
-To change how the whole app looks, redefine POS design tokens. Do not write
-selectors for the app's classes, IDs, elements, or markup structure. Those are
-internal and can change in any release.
+The POS publishes two kinds of name that are kept working between releases.
+Work down this ladder and stop at the first rung that does the job:
 
-- Put the overrides on `:root`.
-- Load them from a Style Block (`s_c__Style_Block__c`) that is Active and
+1. **Design tokens on `:root`** change the whole app: color, type, and sizes
+   everywhere a token is read.
+2. **Component properties on a part** change one published component, one
+   kind of it, or one named instance, such as the cart's Pay button.
+3. **Your own classes and markup in a View you own.** Style them however the
+   store needs; they are the store's to keep.
+4. **The app's own classes, IDs, elements, or markup structure.** Selecting
+   them works, and nothing stops a store doing it, but it is unsupported: the
+   names are internal, can change in any release, and the store owns the
+   checking and rework after each upgrade. Reach this rung only through
+   [Ask before using anything unlisted](#ask-before-using-anything-unlisted).
+
+For the first two rungs:
+
+- Load the CSS from a Style Block (`s_c__Style_Block__c`) that is Active and
   Global, with `pos` in Channels and `web` left out. A block with `web` also
   loads on the storefront, and the web theme shares some names, such as
   `--sc-color-primary`.
 - Write Content without `<style>` tags.
+- Take token names only from the POS design tokens reference article, and
+  part, attribute, and property names only from the POS styling API article
+  and the component styling reference articles (Button styling reference, and
+  any later component). A class name taken from the rendered DOM is internal,
+  so using it is rung 4: say so and get agreement first. Do not copy a release
+  number from a reference into a customization.
 - Change each color together with its paired `on-` color, for example
   `--sc-color-primary` with `--sc-color-on-primary`.
-- Take token names only from the POS design tokens reference article. Never
-  take a class name from the rendered DOM.
+
+### Selector rules for parts
+
+- Select a part with `[part~='name']`. Always `~=`, never `=` or `^=`: an
+  element can carry more than one part, such as `button-root` beside
+  `cart-checkout-button`, and only `~=` still matches it.
+- Use at most two parts: the component's root part or a named instance, a
+  space, then one of that component's own parts. No `>`, `+`, or `~`, and no
+  structural pseudo-classes such as `:first-child`, `:nth-child()`, or
+  `:has()`.
+- Narrow a part by a listed attribute only inside `:where()`, one attribute per
+  `:where()`: a root part by the component's kinds, or the part an attribute is
+  listed on, such as `record-table-row[aria-current]`. Put the rule for a named
+  instance after the rules for the kinds, because inside `:where()` they tie and
+  the later rule wins.
+- A state pseudo-class (`:hover`, `:focus-visible`, `:active`, `:disabled`)
+  or pseudo-element goes last.
+- Set a component property when one exists; use plain CSS only when none
+  does. A property applies to every kind of the component unless the rule
+  narrows it, and a property set after a state applies in that state only.
+- Change appearance only: color, background, border, radius, font, and inner
+  padding. Leave `display`, `position`, `order`, `width`, and outer margin
+  alone.
+- Do not add `!important`. Published components load their styles in
+  cascade layers, so a store rule wins over them at any specificity. The
+  rest of the POS's styles, including layout utilities a screen passes to a
+  component, are unlayered and follow normal specificity.
+- Parts are for CSS only. Never find an element by a part from a script.
+
+### Ask before using anything unlisted
+
+When a request needs an element that has no part, or a change a listed
+property does not cover:
+
+- Stop and name the element and the screen it is on.
+- Offer the nearest listed route: a design token, the **Color** field on the
+  action item, or a property on the component's root part.
+- Offer to raise a support case asking for a part or property for it.
+- Never fall back silently to a class, ID, or markup structure taken from
+  the DOM. If the requester accepts that cost knowingly, keep the rule in a
+  Style Block of its own, record the screens it touches, and note that it has
+  to be checked after every upgrade.
 
 If a requirement needs a platform selector or structure not documented for
 customization, request a supported hook rather than shipping a fragile override.

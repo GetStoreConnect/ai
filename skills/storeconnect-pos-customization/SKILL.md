@@ -27,6 +27,7 @@ and behavior.
 | Change initial sorting or filtering | Supported layout settings | Verify behavior and scale on the installed release. |
 | Render supported custom content | A POS view | Use only the documented context and data surface. |
 | Add a button, menu entry, or tile | A supported action configuration | Confirm the action, parameters, permissions, and offline behavior in current documentation. |
+| Restyle a component the POS draws, or one named element such as the Pay button | The published component properties and parts, in a POS Style Block | Use only names listed on the component's styling reference article. If the request needs anything else, say which element has no part yet and ask before using an internal class. |
 | Add supported cross-screen styling or scripting | Script or style configuration | Keep it minimal, reversible, and within documented extension points. For app-wide color or type, redefine POS design tokens on `:root` in a POS Style Block. |
 | Produce a receipt, docket, document, or label | A supported print template | Select the documented output family before authoring and test it safely. |
 
@@ -46,7 +47,8 @@ Open only the reference needed for the requested outcome:
 - **Receipts, dockets, documents, or labels** →
   [references/print-templates.md](references/print-templates.md). Select and
   validate the supported output family before rollout.
-- **Supported scripts, styles, or integrations** →
+- **Supported scripts, styles, or integrations**, including restyling the POS's
+  own components through published parts and properties →
   [references/js-and-integration-patterns.md](references/js-and-integration-patterns.md).
   Do not target undocumented application structure.
 - **Performance, testing, offline behavior, rollout, or rollback** →

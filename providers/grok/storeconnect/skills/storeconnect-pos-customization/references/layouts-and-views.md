@@ -196,6 +196,9 @@ can differ from record, page, or modal Views.
 - Style only markup and prefixed classes that the View owns.
 - Do not target or hide platform DOM classes.
 - Read POS design tokens with `var()` for colors so the row matches the app.
+- To restyle a component the POS draws rather than markup the View owns,
+  follow "Restyling the app itself" in
+  [js-and-integration-patterns.md](js-and-integration-patterns.md).
 - Do not rely on an inline handler, global function, or action payload copied
   from another release.
 
