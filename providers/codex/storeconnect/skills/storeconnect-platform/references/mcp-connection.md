@@ -68,6 +68,16 @@ Add the discovered URL as a remote Streamable HTTP server using the AI client's 
 2. Start the client's login action.
 3. Complete authentication only in the StoreConnect page the client opens.
 
+When the operator asks where to get the value that page asks for, point them to the StoreConnect
+Console: **Agents** > **Connect an agent**, then copy **Your personal access token**. The sign-in
+page labels its box **API Token**; it is the same value. That panel also shows the store's
+**Store URL** and setup steps for supported AI clients. Do not send the
+operator to Setup > Users or their User record first: the **API Token** field is not on the
+standard page layout, so it is usually invisible there. It is not a Salesforce security token or
+a connected-app Consumer Key, and StoreConnect support does not issue it. If the panel says agent
+access is not turned on, a StoreConnect administrator turns it on from **Agents** > **Manage agent
+access**.
+
 Sign-in binds the session to the store at the address it was started from, so a session started at
 one store's path is refused at another's. The store also accepts the browser sign-in only from
 client callback addresses StoreConnect has listed. A client on the operator's own machine is
