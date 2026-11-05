@@ -15,6 +15,7 @@ documentation before configuring a store.
 - [Layout identifiers](#layout-identifiers)
 - [Layout Fields](#layout-fields)
 - [Layout Filters](#layout-filters)
+- [Field names and sorting](#field-names-and-sorting)
 - [POS Views](#pos-views)
 - [POS Liquid](#pos-liquid)
 - [Queries and record fields](#queries-and-record-fields)
@@ -95,6 +96,24 @@ authorization control.
 Where a filter also affects which records are available to the register, confirm
 the intended scope in current StoreConnect documentation and verify it through
 the supported Manage data screen.
+
+## Field names and sorting
+
+The register stores a copy of each field it needs, and only those fields. A field
+reaches the register when a Layout Field, a Layout Filter, or the Layout's
+**Sort** names it.
+
+- Write each field name as the field's API name, for example
+  `s_c__loyalty_tier__c`.
+- The register builds a local index for every Layout Filter field and every
+  **Sort** field. A name containing a space or a hyphen can't be indexed, so the
+  register can't open the local database and stops at a start-up error. Check
+  each filter and sort name against the live object description before saving.
+- **Sort** takes `field:direction` pairs separated by `;`, for example
+  `name:asc;createddate:desc`.
+- A Sort that offers a menu of options separated by `|` sends only the first
+  option's field to the register. Add the field for each later option as a
+  Layout Field as well, or sorting by that option has no values to sort on.
 
 ## POS Views
 

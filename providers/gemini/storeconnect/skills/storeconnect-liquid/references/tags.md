@@ -695,9 +695,11 @@ Writes one Custom Data Mapping field on a Drop.
 {%- assign new_count = current_product.data.view_count__c | default: 0 | plus: 1 -%}
 {% update current_product, field: "view_count__c", value: new_count %}
 ```
-Four preconditions, each of which fails silently:
+Four preconditions:
 1. Must be inside a controller template.
-2. The first argument must be a **Drop**, not a record from `{% query %}`. Use `| cast:` first.
+2. The first argument must be a **Drop**. A `{% query %}` record on a custom object can be
+   updated directly. A `{% query %}` record on a standard object (`Product2`, `Contact` and
+   so on) raises a Liquid error, so cast the record to the matching Drop with `| cast:` first.
 3. The field must have a Custom Data Mapping marked editable; otherwise you get a Console
    warning only.
 4. Only mapped custom fields can be written — never a standard or managed-package field.

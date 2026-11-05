@@ -349,19 +349,22 @@ the page.
 
 ## Writes that silently do nothing
 
-`{% update %}` has four preconditions. Miss any one and it is a no-op with no page-visible
+`{% update %}` has four preconditions. Miss the first, third or fourth and it is a no-op with
+no page-visible error. Miss the second with a standard-object record and it raises a Liquid
 error.
 
 1. The template must be a **controller template**. In a page, snippet, block or component
    template the tag returns immediately.
-2. The first argument must be a **Drop**, not a record returned by `{% query %}`.
+2. The first argument must be a **Drop**. A record returned by `{% query %}` on a custom
+   object can be updated directly. A record on a standard object must be cast to the matching Drop
+   first.
 3. The field must have a Custom Data Mapping that is marked editable. A missing or read-only
    mapping logs a Console warning and returns.
 4. Only Custom Data Mapping fields can be written. Standard and managed-package fields
    cannot be set from Liquid.
 
 ```liquid
-{%- comment -%} Broken: query returns records, not Drops — nothing is written {%- endcomment -%}
+{%- comment -%} Broken: a Product2 query record is not a Drop, so the tag raises a Liquid error {%- endcomment -%}
 {% query 'Product2' as records, s_c__slug__c: slug %}
 {% for record in records %}
   {% update record, field: "view_count__c", value: 1 %}

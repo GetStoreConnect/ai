@@ -140,11 +140,13 @@ a redirect it is empty.
 
 Writes a custom-data field on a drop. Works in all three phases.
 
-- The first argument must be a drop (`current_cart`, `current_customer`, a record
-  from `{% query %}`). Anything else is ignored.
+- The first argument must be a drop (`current_cart`, `current_customer`, or a
+  record from `{% query %}` on a custom object). Anything that is not a drop is
+  ignored. A `{% query %}` record on a standard object raises a Liquid error, so
+  cast the record to the matching drop with `| cast:` first.
 - Requires a **read-write** Custom Data Mapping for that object and field, with
   the required field access configured. An unmapped field name and a read-only mapped
-  field are both **silently ignored** — no error, no warning.
+  field are both ignored with no page error; the only signal is a Console warning.
 - Values read back through `.data.<field>` are HTML-escaped. Apply `| unescape`
   to a param before writing if you need the original characters, and remember
   that doing so re-arms any markup the value contained.

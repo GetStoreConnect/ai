@@ -20,7 +20,8 @@ deployment ordering and `storeconnect-salesforce-data` for record shape.
 ## Stage and review
 
 1. Group only related edits into one change. Keep unrelated work in a separate
-   change.
+   change. Keep the change summary to a sentence or two: Salesforce rejects an
+   overlong summary when the change is submitted.
 2. Read back the staged summary from the live server and present every material
    effect to the user: additions, updates, deletions, links, media, pricing,
    navigation, and theme activation.
@@ -43,14 +44,26 @@ deployment ordering and `storeconnect-salesforce-data` for record shape.
 
 1. Submit through the current supported review action. Leave any required
    independent administrative review or publication to the authorized person.
-2. StoreConnect and Salesforce synchronize asynchronously; wait, re-read and
+   Tell the user who that is:
+   - The publisher needs an approver-level Content Changes Store Role for the
+     change's store.
+   - The publisher can't be the change's author unless their role has the
+     **Publish Own Changes** scope.
+   - A change made in Website Builder is not tied to one store, so only an
+     approver whose role covers all stores can publish it.
+   - An approved change is not live until the change status reaches published.
+2. If the submission fails and the change stays in review with nothing in
+   Salesforce, withdraw it to draft, discard the draft, and stage the edits again
+   in a new change. Report the failure to the user; never resubmit the same
+   change unchanged.
+3. StoreConnect and Salesforce synchronize asynchronously; wait, re-read and
    never repeat a write merely because it is not visible yet.
-3. Surface every warning, rejection, and incomplete item. Never report success
+4. Surface every warning, rejection, and incomplete item. Never report success
    from the initial submission response alone.
-4. After publication, read the affected content again and confirm the intended
+5. After publication, read the affected content again and confirm the intended
    store reflects the approved change. Allow time for a completed operation to
    become observable before concluding it failed.
-5. Report the final state plainly. If any part did not publish, say which part
+6. Report the final state plainly. If any part did not publish, say which part
    and why.
 
 ## Boundaries

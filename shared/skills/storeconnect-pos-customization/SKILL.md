@@ -123,7 +123,8 @@ and obtaining the required approval.
 | A script or style works only on some screens | Confirm that the extension point is supported on every intended surface and release. |
 | A global customization has no effect | Re-read its required activation, scope, and channel configuration in current documentation. |
 | Print output is blank or malformed | Confirm the selected output family, template syntax, data context, and target printer configuration. |
-| Sorting or filtering appears ignored | Re-read the live layout configuration and verify it against the current release contract. |
+| Sorting or filtering appears ignored | Re-read the live layout configuration and verify it against the current release contract. Check that every sort option's field reaches the register; see [field names and sorting](references/layouts-and-views.md#field-names-and-sorting). |
+| Registers stop at a start-up error after a Layout change | A Layout Filter or Sort field name with a space or hyphen; see [field names and sorting](references/layouts-and-views.md#field-names-and-sorting). |
 
 ## Related skills
 

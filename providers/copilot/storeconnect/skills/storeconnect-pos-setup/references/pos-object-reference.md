@@ -171,8 +171,20 @@ payment unless the operator approved a test transaction.
 
 ## Pricebook resolution
 
-Pricing can vary with the attached customer, outlet, store, and installed
-configuration. Do not assume a fixed precedence from an old reference.
+The register uses the first **active** price book it finds, in this order:
+
+1. The price book on the attached customer's Account.
+2. The price book on that Account's Membership.
+3. The Outlet's price book.
+4. The Store's price book.
+
+With no customer attached, the register starts at the Outlet. An inactive price
+book is skipped, not used.
+
+The register does not read the Contact's **Can use Account pricing** checkbox.
+Any customer whose Account has an active price book gets that price book at the
+register, whatever the checkbox says. Do not use the checkbox to restrict account
+pricing at the POS.
 
 To diagnose a price:
 
