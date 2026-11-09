@@ -7,8 +7,9 @@ implementation.
 
 Read current StoreConnect documentation for the installed release and supported
 device before acting. If a required status or control is unavailable, stop and
-contact the authorized operator or StoreConnect support rather than using
-developer tools, clearing browser data, or reproducing an internal request.
+contact the authorized operator or StoreConnect support rather than improvising
+with developer tools, browser data, or internal requests. The only exception is
+the documented manual reset in the [recovery ladder](#recovery-ladder).
 
 ## Contents
 
@@ -89,14 +90,16 @@ An inability to confirm that work is safely synchronized is a stop condition.
 
 ## Device recovery boundary
 
-POS owns its device state and connection lifecycle. Never inspect, edit, export,
-or clear internal browser or application storage as a recovery procedure. Never
-use developer tools, local database utilities, hidden URLs, raw requests, or
-platform-maintained Salesforce fields to force a result.
+POS owns its device state and connection lifecycle. Never inspect, edit, or
+export internal browser or application storage, and never use hidden URLs or raw
+requests to force a result. Clearing that storage is allowed only as the manual
+reset in the [recovery ladder](#recovery-ladder).
 
-Use supported controls only. Any reset, clear, disconnect, or reassignment that
-can interrupt trading or discard work requires explicit approval after the risk
-is stated.
+Any reset, clear, disconnect, or reassignment that can interrupt trading or
+discard work requires explicit approval after the risk is stated. The risk
+includes the open shift: a disconnect or wipe does not end it, it stays open in
+Salesforce, and the next sign-in starts a new shift. End the shift first when the
+POS allows it. Afterward, verify the register connects and opens on a new shift.
 
 ## Performance and catalog size
 
@@ -108,7 +111,7 @@ Diagnose the outcome rather than tuning undocumented internals:
 | Large catalog takes too long | Compare the device and browser with current supported requirements; complete setup outside trading hours |
 | Only one data category is slow or incomplete | Confirm scope and active Layout Filters, then use the narrowest supported resynchronization |
 | Several registers differ | Compare their store, outlet, register, provider, and customization scope before changing data |
-| Device reports limited capacity | Follow current StoreConnect and device-vendor capacity guidance; do not clear application data |
+| Device reports limited capacity | Follow current StoreConnect and device-vendor capacity guidance; do not clear application data to free space |
 | Browser customization interferes | Reproduce in a clean, supported profile and follow the current compatibility guidance |
 
 For a large-catalog rollout, stage one representative supported device in
@@ -129,13 +132,20 @@ Work in order and stop as soon as the supported outcome is restored.
    unsynchronized before reconnecting.
 5. **Disconnect normally when reassignment is required.** Obtain approval,
    verify the register is not trading, and use the in-POS control.
-6. **Use the supported administrative register reset only when necessary.**
-   Confirm no active device or trading workflow still owns the register.
-7. **Use a full in-POS reset only as the last resort.** State the possible loss
-   of unsynchronized orders, payments, or shifts; obtain explicit approval; and
-   follow the current documented flow.
-
-Never substitute a browser-data wipe or a direct edit of connection state.
+6. **Use the administrative register reset only when necessary.** Uncheck
+   **Connected** on the register in Salesforce, for example when the device that
+   held the register is lost or broken. Confirm no active device or trading
+   workflow still owns the register.
+7. **Use a full in-POS reset when the POS still responds.** State the possible
+   loss of unsynchronized orders, payments, or shifts; obtain explicit approval;
+   and follow the current documented flow.
+8. **Use the manual reset only when the in-POS controls cannot be reached.**
+   Follow the manual reset in
+   [Troubleshoot a frozen or crashed POS](https://support.storeconnect.com/article/reset-an-unresponsive-pos):
+   uncheck **Connected**, then clear the POS browser storage on the device as
+   that article describes. Never use it in place of an earlier step. When a
+   frozen POS means unsynchronized work cannot be checked, say that it will be
+   lost and get approval for that loss.
 
 Escalate to StoreConnect support when work at risk cannot be verified, the
 supported controls cannot be reached, or the same sanitized error returns after
@@ -204,7 +214,7 @@ Variables, templates, files, prompts, logs, or issues.
 | Synchronization appears incomplete | Confirm intended scope and Layout Filters, read the supported status, then use the narrowest documented resynchronization |
 | Hardware is unavailable | Confirm current compatibility, authorized vendor prerequisites, the selected template, and the in-POS connection status |
 | Staff cannot sign in | Confirm active user and outlet access plus completion of the supported PIN prerequisite without reading the PIN; then wait for the documented refresh |
-| Upgrade or initialization does not finish | Keep the supported session available, capture sanitized status and time, and contact StoreConnect support rather than clearing local state |
+| Upgrade or initialization does not finish | Capture sanitized status and time, work the documented recovery for the "We couldn't load your register" screen in order, and contact StoreConnect support if it still fails |
 
 Test recovery and hardware changes in non-production first. Schedule production
 work outside trading hours and obtain explicit approval for any action that can

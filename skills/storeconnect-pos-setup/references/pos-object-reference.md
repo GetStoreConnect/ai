@@ -177,7 +177,8 @@ payment unless the operator approved a test transaction.
 
 The register uses the first **active** price book it finds, in this order:
 
-1. The price book on the attached customer's Account.
+1. The price book on the attached customer's Account, only when the Contact has
+   **Can use Account pricing** checked.
 2. The price book on that Account's Membership.
 3. The Outlet's price book.
 4. The Store's price book.
@@ -185,10 +186,10 @@ The register uses the first **active** price book it finds, in this order:
 With no customer attached, the register starts at the Outlet. An inactive price
 book is skipped, not used.
 
-The register does not read the Contact's **Can use Account pricing** checkbox.
-Any customer whose Account has an active price book gets that price book at the
-register, whatever the checkbox says. Do not use the checkbox to restrict account
-pricing at the POS.
+**Can use Account pricing** gates only the Account's price book. A customer
+without it skips to the Membership price book, so the checkbox restricts account
+pricing at the POS the same way it does on the web. The same checkbox decides
+whether the Account price book's tax method applies.
 
 To diagnose a price:
 

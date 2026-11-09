@@ -94,9 +94,10 @@ flows may impose additional steps in the installed release.
 
 4. **Establish the register.** Create or select an active register for the
    outlet through the supported workflow. A device offers only that outlet's
-   registers that are **Active** and not **Connected**. Do not manually edit
-   platform-maintained connection state; use the supported disconnect or
-   administrative reset flow when reassignment is required.
+   registers that are **Active** and not **Connected**. When reassignment is
+   required, use the supported disconnect, or the administrative reset
+   (unchecking **Connected** on the register in Salesforce). See the
+   [recovery ladder](references/sync-storage-hardware.md#recovery-ladder).
 
 5. **Configure staff access.** Create the supported role or capability profile,
    grant the staff member access to the intended outlet, and have a Salesforce
@@ -153,8 +154,8 @@ flows may impose additional steps in the installed release.
 ## Failure modes worth pre-empting
 
 - **Wrong store or outlet.** Re-read every relationship after a change.
-- **Register still assigned elsewhere.** Use the supported disconnect or reset
-  workflow with approval; do not edit local data or platform-maintained state.
+- **Register still assigned elsewhere.** Use the supported disconnect or the
+  administrative reset with approval; do not edit local data.
 - **Product outside supported catalog scope.** Work the readiness checklist
   before resetting a device.
 - **No effective price.** Establish the applicable pricing context before
