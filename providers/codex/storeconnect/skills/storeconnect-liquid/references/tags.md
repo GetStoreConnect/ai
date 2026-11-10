@@ -674,7 +674,7 @@ Sends a response body and stops normal page rendering.
 {%- new Map result -%}
 {%- assign result = result | set_key: "success", true -%}
 {%- assign response_body = result | json -%}
-{% respond body: response_body, status: 200, layout: false %}
+{% respond body: response_body, layout: false %}
 ```
 Options: `body:`, `status:` (default 302), `layout:` (default true), `notice:`, `alert:`,
 `data:`, `to:`. Pre-serialize structured output with `| json`.
