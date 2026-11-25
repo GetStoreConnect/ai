@@ -190,7 +190,7 @@ not copy, construct, or publish a raw route map.
 | `pages/not_found` | platform-routed unmatched requests | `error` |
 | `pages/maintenance` | platform-routed maintenance outcome | — |
 | `pages/auth/login` | the Store Drop's documented login path | — |
-| `pages/auth/register` | the Store Drop's documented registration path | — |
+| `pages/auth/register` | no Store Drop path helper; the registration route is the `route.register` entry in the custom URL paths article | — |
 | `pages/auth/password/forgot` | the Store Drop's documented recovery path | — |
 | `pages/auth/confirmation/pending` | the supported confirmation workflow | — |
 | `pages/auth/invitation/pending` | the supported invitation workflow | — |
