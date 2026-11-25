@@ -63,6 +63,7 @@ These variables resolve on every page:
 | `current_membership` | MembershipDrop | Customer's membership (nil if none) |
 | `current_events` | Collection | Customer events |
 | `current_outlet` | OutletDrop | Outlet set for this session. Not POS-only: a storefront controller can set it with the `outlet.set` action, after which it drives outlet stock and outlet price book. Nil when none is set. |
+| `current_payment_capture_only?` | Boolean | True when the order in progress only saves a payment method with no charge today (the POS web card capture page). For the storefront cart use `current_cart.auto_save_payment_method?` |
 
 ### Page-Specific Context
 
@@ -196,6 +197,7 @@ Store configuration and settings.
 | `display_currency?` | Boolean | Display prices in currency |
 | `display_points?` | Boolean | Display prices in points |
 | `data` | Hash | Custom data fields |
+| `addresses_path` / `new_address_path` | String | Address book page, and the page to add an entry, for the signed-in customer |
 
 Also available on supported versions: `url`, `favicon`, `zone`, `tax_inclusive?`, `max_coupon_codes_per_cart`, `geolocation`, `staff`, `styles`, `voucher_providers`, `terms_conditions_page`, and injected `head_content` / `body_content`.
 
@@ -344,7 +346,7 @@ Detailed pricing information for a product. Accessed via `product.pricing`.
 | `has_sale_points?` | Boolean | Has sale points |
 | `subscription?` | Boolean | Is a subscription price |
 
-Also available: `deposit_amount`, `deposit_points`, `deposit_required?`, `earn_points`, `bonus_earn_points`, `total_earn_points`, `checkout_earn_points`, `checkout_points`, `purchase_points`, `sale_purchase_points`, `points_sale?`, `points_bonus?`, `can_earn_points?`, `can_purchase_with_currency?`, `can_purchase_with_points?`, `use_currency?`, `use_points?`, `subscription_term`, `subscription_term_count`, `subscription_term_unit`, `subscription_total_price`, `subscription_total_points`, `fixed_term_subscription?`, `variable_pricing?`, `variable_pricing_amounts`, `variable_pricing_min_amount`, `variable_pricing_max_amount`, `variable_pricing_custom_allowed?`, `product`.
+Also available: `deposit_amount`, `deposit_points`, `deposit_required?`, `earn_points`, `bonus_earn_points`, `total_earn_points`, `checkout_earn_points`, `checkout_points`, `purchase_points`, `sale_purchase_points`, `points_sale?`, `points_bonus?`, `can_earn_points?`, `can_purchase_with_currency?`, `can_purchase_with_points?`, `use_currency?`, `use_points?`, `subscription_term`, `subscription_term_count`, `subscription_term_unit`, `subscription_total_price`, `subscription_total_points`, `fixed_term_subscription?`, `variable_pricing?`, `variable_pricing_amounts`, `variable_pricing_min_amount`, `variable_pricing_max_amount`, `variable_pricing_custom_allowed?`, `product`, `sale_points` (points price a promotion was calculated against).
 
 ### ProductCategoryDrop
 
@@ -541,6 +543,10 @@ Shopping cart. Available globally as `current_cart`.
 | `created_at` | DateTime | Creation timestamp |
 | `select_path` | String | Path to select/switch to this cart |
 | `data` | Hash | Custom data fields |
+| `can_offer_checkout_deposit?` | Boolean | A checkout deposit can be offered: the feature applies and there is something to defer. Gate the `update-checkout-deposit` form on it |
+| `checkout_deposit_amount` | Number | Deposit the customer entered, or nil |
+| `checkout_full_total` | Number | Full total, ignoring any checkout deposit |
+| `checkout_minimum_deposit_amount` | Number | Minimum deposit in currency, or 0. Not enforced by the form |
 
 > **There is no `empty?` on CartDrop** (test `current_cart == blank or current_cart.items.size == 0`).
 
@@ -584,6 +590,7 @@ A line item in the cart.
 | `taxes` | Collection | Per-jurisdiction tax lines (ItemTaxDrop: `name`, `rate`, `amount`) |
 | `has_pos_discount?` | Boolean | Has a point-of-sale discount applied |
 | `data` | Hash | Custom data fields |
+| `delivery_group` | DeliveryGroupDrop | Delivery group this item belongs to |
 
 > **There is still no `unit_price` or `line_total` on CartItemDrop** — the per-unit price is `item.pricing.price`; the line total the customer pays now is `item.total_payable`. `item.amount_paid` exists for parity with OrderItemDrop but is always 0 on a cart.
 
@@ -632,7 +639,7 @@ A completed or pending order. Available as `current_order`.
 | `deposit_owing?` | Boolean | Has unpaid deposits |
 | `data` | Hash | Custom data fields |
 
-Also available: `amount_due_now`, `sub_total_excl_tax`, `adjustment_items`, `surcharge_items`, `assisted_by` (StaffDrop), `bill_to_contact`, `ship_to_contact`, `outlet`, `quotable?`, the deprecated flat address fields `billing_address_lines` / `shipping_address_lines` and `billing_street`/`billing_city`/`billing_state`/`billing_postal_code`/`billing_country` plus their `shipping_*` counterparts (**prefer `billing_address` / `shipping_address`, which return AddressDrops**), `checkout_shipping_email` / `checkout_shipping_phone`, `checkout_step`, `collection_point` / `collection_time`, `original_order`, `refund_orders`, `subscription_order`, `has_deposit_items?`, `has_pos_discount?`, `assisted_by_name`, `pricebook`, `store`, `bookable_items`, `collect_booking_attendees?`, `total_earn_points_amount`, points variants of the totals, `total_remaining_subscriptions`.
+Also available: `amount_due_now`, `sub_total_excl_tax`, `adjustment_items`, `surcharge_items`, `assisted_by` (StaffDrop), `bill_to_contact`, `ship_to_contact`, `outlet`, `quotable?`, the deprecated flat address fields `billing_address_lines` / `shipping_address_lines` and `billing_street`/`billing_city`/`billing_state`/`billing_postal_code`/`billing_country` plus their `shipping_*` counterparts (**prefer `billing_address` / `shipping_address`, which return AddressDrops**), `checkout_shipping_email` / `checkout_shipping_phone`, `checkout_step`, `collection_point` / `collection_time`, `original_order`, `refund_orders`, `subscription_order`, `has_deposit_items?`, `has_pos_discount?`, `assisted_by_name`, `pricebook`, `store`, `bookable_items`, `collect_booking_attendees?`, `total_earn_points_amount`, points variants of the totals, `total_remaining_subscriptions`, `checkout_minimum_deposit_amount`, `risk_review` (String), `risk_review_pending?`, `transaction_discount` (cart-level discount total).
 
 ### OrderItemDrop
 
@@ -1090,6 +1097,7 @@ A shipment/fulfillment.
 | `order` | OrderDrop | Parent order |
 | `path` | String | Link path for this fulfillment |
 | `data` | Hash | Custom data fields |
+| `source_outlet` / `destination_outlet` | OutletDrop | Source and destination outlets for this fulfillment |
 
 > There is no `shipped_at` — use `status` / `status_changed_at` / `tracking_updated_at`.
 
@@ -1197,6 +1205,7 @@ A physical address (used for billing/shipping on orders and carts).
 | `state` | String | State/province |
 | `postal_code` | String | Postal/ZIP code |
 | `country` | String | Country |
+| `single_line` | String | Street, city, state, postal code and country on one line, comma-separated. Suits a dropdown option label |
 
 ### CountryDrop
 

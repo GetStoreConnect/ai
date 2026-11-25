@@ -190,6 +190,15 @@ Returns the remainder of dividing one number by another.
 <!-- Output: 3.357 -->
 ```
 
+### `finite`
+
+Replaces a non-finite number (`Infinity`, `-Infinity`, `NaN`) with `2147483647`, or with the `replacement` option. A finite number or a non-number passes through. Use it in feeds for `total_available_to_sell`, which is `Infinity` when nothing limits what a product can sell. Assign the result before `set_key`: a filter at the end of a `set_key` chain applies to the map.
+
+```liquid
+{{ product.total_available_to_sell | finite }}
+{{ product.total_available_to_sell | finite, replacement: 0 }}
+```
+
 ---
 
 ## String Filters
@@ -1003,6 +1012,23 @@ Always re-check that the current customer is entitled to anything the restored
 value identifies. Do not use this for credentials, customer data, payment data,
 or a value you would otherwise refuse to send to the browser.
 
+### `csv_escape`
+
+Escapes one value as a CSV cell (RFC 4180): wraps it in double quotes when it contains a comma, double quote, CR or LF, doubling embedded quotes. Escapes structure only, not spreadsheet formula injection. Optional in a CSV feed, which already escapes each interpolated value.
+
+```liquid
+{{ "Beans, rice and more" | csv_escape }}
+<!-- Output: "Beans, rice and more" -->
+```
+
+### `render_liquid`
+
+Renders Liquid stored inside a field's value (for example a rich-text description containing `{{ }}`). A feed in `raw` record mode returns stored values unrendered, so pass such fields through this filter. The optional argument is exposed to the embedded Liquid as `record`. A blank input is returned unchanged.
+
+```liquid
+{{ p.description | render_liquid: p }}
+```
+
 ---
 
 ## Collection Filters
@@ -1122,6 +1148,17 @@ Converts any object to a JSON string. Both filter names are identical. On a seri
 
 {{ pets | serialize }}
 <!-- Output: [{"id":1,"name":"Dog"},{"id":2,"name":"Cat"}] -->
+```
+
+### `csv`
+
+Serializes a map or list as CSV, the CSV counterpart of `json`. A map becomes one row of the map's values; a list of maps becomes a header row (the first map's keys) plus a row per map; a list of scalars becomes one row. Cells are RFC 4180-escaped and rows are joined with a line feed. A nested list or map in a cell is stringified, so flatten rows first. Returns an empty string on failure. Built for feed templates: the output is marked as already encoded, so a CSV feed does not escape it again.
+
+```liquid
+{%- new Map row -%}
+{%- assign row = row | set_key: "sku", "FR-3000" | set_key: "name", "Fridgetastic 3000, white" -%}
+{{ row | csv }}
+<!-- Output: FR-3000,"Fridgetastic 3000, white" -->
 ```
 
 ### `contains` (filter)

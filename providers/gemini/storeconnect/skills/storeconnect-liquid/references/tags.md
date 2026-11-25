@@ -256,6 +256,16 @@ Prevents content from being rendered.
 
 Also supports inline form: `{%# This is a comment %}`
 
+### `format`
+
+Block tag that sets how `{{ }}` values inside it are escaped. `html`/`xml` HTML-escape (also the default with no block), `js` JavaScript-escapes, `json`/`jsonl` JSON-encode each value, `csv` escapes each value as a CSV cell, `txt`/`md` output raw. `encode: false` outputs raw whatever the format. An unknown format HTML-escapes. Feeds already encode for their requested format, so use it only to override a region. Never wrap customer-entered data in a raw block on an HTML page.
+
+```liquid
+{% format 'js' %}
+  var productName = "{{ product.name }}";
+{% endformat %}
+```
+
 ### `raw`
 
 Temporarily disables Liquid processing.
